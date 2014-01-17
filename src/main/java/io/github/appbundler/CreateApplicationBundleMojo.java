@@ -24,6 +24,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.StringWriter;
 import java.io.Writer;
@@ -90,13 +92,12 @@ public class CreateApplicationBundleMojo
      */
     private File diskImageFile;
 
-
     /**
-     * The location of the Java Application Stub
+     * The main class to execute when double-clicking the Application Bundle
      *
-     * @parameter default-value="/System/Library/Frameworks/JavaVM.framework/Versions/Current/Resources/MacOS/JavaApplicationStub";
+     * @parameter default-value="JavaAppLauncher";
      */
-    private File javaApplicationStub;
+    private String javaLauncherName;
 
     /**
      * The main class to execute when double-clicking the Application Bundle
@@ -191,7 +192,7 @@ public class CreateApplicationBundleMojo
      * The location of the template for Info.plist.
      * Classpath is checked before the file system.
      *
-     * @parameter default-value="org/codehaus/mojo/osxappbundle/Info.plist.template"
+     * @parameter default-value="io/github/appbundler/Info.plist.template"
      */
     private String dictionaryFile;
 
@@ -255,33 +256,29 @@ public class CreateApplicationBundleMojo
         File resourcesDir = new File( contentsDir, "Resources" );
         resourcesDir.mkdirs();
 
-        File javaDirectory = new File( resourcesDir, "Java" );
+        File javaDirectory = new File( contentsDir, "Java" );
         javaDirectory.mkdirs();
 
         File macOSDirectory = new File( contentsDir, "MacOS" );
         macOSDirectory.mkdirs();
 
         // Copy in the native java application stub
-        File stub = new File( macOSDirectory, javaApplicationStub.getName() );
-        if(! javaApplicationStub.exists()) {
-            String message = "Can't find JavaApplicationStub binary. File does not exist: " + javaApplicationStub;
+        File launcher = new File(macOSDirectory, javaLauncherName);
 
-            if(! isOsX() ) {
-                message += "\nNOTICE: You are running the osxappbundle plugin on a non OS X platform. To make this work you need to copy the JavaApplicationStub binary into your source tree. Then configure it with the 'javaApplicationStub' configuration property.\nOn an OS X machine, the JavaApplicationStub is typically located under /System/Library/Frameworks/JavaVM.framework/Versions/Current/Resources/MacOS/JavaApplicationStub";
-            }
+        FileOutputStream launcherStream = null;
 
-            throw new MojoExecutionException( message);
+        try {
+            launcherStream = new FileOutputStream(launcher);
+        } catch (FileNotFoundException e) {
+            throw new MojoExecutionException(
+                "Could not copy file to directory " + launcher, e );
+        }
 
-        } else {
-            try
-            {
-                FileUtils.copyFile( javaApplicationStub, stub );
-            }
-            catch ( IOException e )
-            {
-                throw new MojoExecutionException(
-                    "Could not copy file " + javaApplicationStub + " to directory " + macOSDirectory, e );
-            }
+        InputStream launcherResourceStream = this.getClass().getResourceAsStream(javaLauncherName);
+        try {
+            copyStream(launcherResourceStream, launcherStream);
+        } catch (IOException e) {
+            throw new MojoExecutionException("Could not copy file " + javaLauncherName + " to directory " + macOSDirectory, e);
         }
 
         // Copy icon file to the bundle if specified
@@ -323,7 +320,7 @@ public class CreateApplicationBundleMojo
             {
                 chmod.setExecutable( "chmod" );
                 chmod.createArgument().setValue( "755" );
-                chmod.createArgument().setValue( stub.getAbsolutePath() );
+                chmod.createArgument().setValue( launcher.getAbsolutePath() );
 
                 chmod.execute();
             }
@@ -397,8 +394,7 @@ public class CreateApplicationBundleMojo
         zipArchiver.setDestFile( zipFile );
         try
         {
-            String[] stubPattern = {buildDirectory.getName() + "/" + bundleDir.getName() +"/Contents/MacOS/"
-                                    + javaApplicationStub.getName()};
+            String[] stubPattern = {buildDirectory.getName() + "/" + bundleDir.getName() +"/Contents/MacOS/" + javaLauncherName};
 
             zipArchiver.addDirectory( buildDirectory.getParentFile(), new String[]{buildDirectory.getName() + "/**"},
                     stubPattern);
@@ -453,42 +449,42 @@ public class CreateApplicationBundleMojo
      * @return A list of file names added
      * @throws MojoExecutionException
      */
-    private List copyDependencies( File javaDirectory )
+    private List<String> copyDependencies(File javaDirectory)
         throws MojoExecutionException
     {
 
         ArtifactRepositoryLayout layout = new DefaultRepositoryLayout();
 
-        List list = new ArrayList();
+        List<String> list = new ArrayList<String>();
 
-        File repoDirectory = new File(javaDirectory, "repo");
-        repoDirectory.mkdirs();
+//        File repoDirectory = new File(javaDirectory, "repo");
+//        repoDirectory.mkdirs();
 
         // First, copy the project's own artifact
         File artifactFile = project.getArtifact().getFile();
-        list.add( repoDirectory.getName() +"/" +layout.pathOf(project.getArtifact()));
+        list.add(layout.pathOf(project.getArtifact()));
 
         try
         {
-            FileUtils.copyFile( artifactFile, new File(repoDirectory, layout.pathOf(project.getArtifact())) );
+            FileUtils.copyFile( artifactFile, new File(javaDirectory, layout.pathOf(project.getArtifact())) );
         }
         catch ( IOException e )
         {
             throw new MojoExecutionException( "Could not copy artifact file " + artifactFile + " to " + javaDirectory );
         }
 
-        Set artifacts = project.getArtifacts();
+        Set<Artifact> artifacts = project.getArtifacts();
 
-        Iterator i = artifacts.iterator();
+        Iterator<Artifact> i = artifacts.iterator();
 
         while ( i.hasNext() )
         {
-            Artifact artifact = (Artifact) i.next();
+            Artifact artifact = i.next();
 
             File file = artifact.getFile();
-            File dest = new File(repoDirectory, layout.pathOf(artifact));
+            File dest = new File(javaDirectory, layout.pathOf(artifact));
 
-            getLog().debug( "Adding " + file );
+            getLog().debug("Adding " + file);
 
             try
             {
@@ -496,10 +492,10 @@ public class CreateApplicationBundleMojo
             }
             catch ( IOException e )
             {
-                throw new MojoExecutionException( "Error copying file " + file + " into " + javaDirectory, e );
+                throw new MojoExecutionException("Error copying file " + file + " into " + javaDirectory, e);
             }
 
-            list.add( repoDirectory.getName() +"/" + layout.pathOf(artifact) );
+            list.add(layout.pathOf(artifact));
         }
 
         return list;
@@ -551,7 +547,7 @@ public class CreateApplicationBundleMojo
         VelocityContext velocityContext = new VelocityContext();
 
         velocityContext.put( "mainClass", mainClass );
-        velocityContext.put( "cfBundleExecutable", javaApplicationStub.getName());
+        velocityContext.put( "cfBundleExecutable", javaLauncherName);
         velocityContext.put( "vmOptions", vmOptions);
         velocityContext.put( "bundleName", cleanBundleName(bundleName) );
         velocityContext.put( "workingDirectory", workingDirectory);
@@ -569,7 +565,7 @@ public class CreateApplicationBundleMojo
         {
             String name = (String) files.get( i );
             jarFilesBuffer.append( "<string>" );
-            jarFilesBuffer.append( "$JAVAROOT/" ).append( name );
+            jarFilesBuffer.append( name );
             jarFilesBuffer.append( "</string>" );
 
         }
@@ -717,5 +713,22 @@ public class CreateApplicationBundleMojo
             }
         }
         return addedFiles;
+    }
+
+    private static boolean copyStream(final InputStream is, final OutputStream os) throws IOException {
+        try {
+            final byte[] buf = new byte[1024];
+
+            int len = 0;
+            while ((len = is.read(buf)) > 0) {
+                os.write(buf, 0, len);
+            }
+            is.close();
+            os.close();
+            return true;
+        } catch (final IOException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 }
