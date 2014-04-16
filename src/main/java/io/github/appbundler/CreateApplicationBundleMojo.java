@@ -27,8 +27,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.io.StringWriter;
 import java.io.Writer;
+import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -42,7 +44,9 @@ import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
+import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
+import org.apache.velocity.app.Velocity;
 import org.apache.velocity.exception.MethodInvocationException;
 import org.apache.velocity.exception.ParseErrorException;
 import org.apache.velocity.exception.ResourceNotFoundException;
@@ -541,7 +545,14 @@ public class CreateApplicationBundleMojo
     private void writeInfoPlist( File infoPlist, List files )
         throws MojoExecutionException
     {
-
+    	Velocity.setProperty("file.resource.loader.path", "target/classes" );
+    	
+    	try {
+			Velocity.init();
+		} catch (Exception e) {
+            throw new MojoExecutionException( "Exception occured in initializing velocity", e);
+		}
+    	
         VelocityContext velocityContext = new VelocityContext();
 
         velocityContext.put( "mainClass", mainClass );
@@ -584,16 +595,30 @@ public class CreateApplicationBundleMojo
 
         try
         {
+        	File f = new File("target/classes", dictionaryFile);
+        	URI rsrc = null;
+        	
+        	if( f.exists() && f.isFile() ) {
+        		rsrc = f.toURI();
+        		
+        		String encoding = detectEncoding(rsrc);
 
-            String encoding = detectEncoding(dictionaryFile, velocityContext);
+                getLog().debug( "Detected encoding " + encoding + " for dictionary file " +dictionaryFile  );
 
-            getLog().debug( "Detected encoding " + encoding + " for dictionary file " +dictionaryFile  );
+                Writer writer = new OutputStreamWriter( new FileOutputStream(infoPlist), encoding );
 
-            Writer writer = new OutputStreamWriter( new FileOutputStream(infoPlist), encoding );
+                Template template = Velocity.getTemplate(dictionaryFile, encoding);
+                
+                template.merge(velocityContext, writer);
 
-            velocity.getEngine().mergeTemplate( dictionaryFile, encoding, velocityContext, writer );
+                writer.close();
+        	} else {
+        		Writer writer = new OutputStreamWriter( new FileOutputStream(infoPlist), "UTF-8");
 
-            writer.close();
+                velocity.getEngine().mergeTemplate( dictionaryFile, "UTF-8", velocityContext, writer );
+
+                writer.close();
+        	}
         }
         catch ( IOException e )
         {
@@ -619,12 +644,9 @@ public class CreateApplicationBundleMojo
 
     }
 
-    private String detectEncoding( String dictionaryFile, VelocityContext velocityContext )
-        throws Exception
-    {
-        StringWriter sw = new StringWriter();
-        velocity.getEngine().mergeTemplate( dictionaryFile, "utf-8", velocityContext, sw );
-        return new DefaultEncodingDetector().detectXmlEncoding( new ByteArrayInputStream(sw.toString().getBytes( "utf-8" )) );
+    private static String detectEncoding( URI uri ) throws Exception {
+    	byte[] data = Files.readAllBytes(Paths.get(uri));
+    	return new DefaultEncodingDetector().detectXmlEncoding( new ByteArrayInputStream(data) );
     }
 
     /**
