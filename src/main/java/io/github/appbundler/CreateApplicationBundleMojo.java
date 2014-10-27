@@ -315,118 +315,6 @@ public class CreateApplicationBundleMojo
         {
             copyResources(buildDirectory, additionalResources);
         }
-
-//        if ( isOSX() )
-//        {
-//            // Make the stub executable
-//            Commandline chmod = new Commandline();
-//            try
-//            {
-//                chmod.setExecutable( "chmod" );
-//                chmod.createArgument().setValue( "755" );
-//                chmod.createArgument().setValue( launcher.getAbsolutePath() );
-//
-//                chmod.execute();
-//            }
-//            catch ( CommandLineException e )
-//            {
-//                throw new MojoExecutionException( "Error executing " + chmod + " ", e );
-//            }
-//
-//            // This makes sure that the .app dir is actually registered as an application bundle
-//            if ( new File( SET_FILE_PATH ).exists() )
-//            {
-//                Commandline setFile = new Commandline();
-//                try
-//                {
-//                    setFile.setExecutable(SET_FILE_PATH);
-//                    setFile.createArgument().setValue( "-a" );
-//                    setFile.createArgument().setValue( "B" );
-//                    setFile.createArgument().setValue( bundleDir.getAbsolutePath() );
-//
-//                    setFile.execute();
-//                }
-//                catch ( CommandLineException e )
-//                {
-//                    throw new MojoExecutionException( "Error executing " + setFile, e );
-//                }
-//            }
-//            else
-//            {
-//                getLog().warn( "Could  not set 'Has Bundle' attribute. " +SET_FILE_PATH +" not found, is Developer Tools installed?" );
-//            }
-//            // Create a .dmg file of the app
-//            Commandline dmg = new Commandline();
-//            try
-//            {
-//                dmg.setExecutable( "hdiutil" );
-//                dmg.createArgument().setValue( "create" );
-//                dmg.createArgument().setValue( "-srcfolder" );
-//                dmg.createArgument().setValue( buildDirectory.getAbsolutePath() );
-//                dmg.createArgument().setValue( diskImageFile.getAbsolutePath() );
-//                try
-//                {
-//                    dmg.execute().waitFor();
-//                }
-//                catch ( InterruptedException e )
-//                {
-//                    throw new MojoExecutionException( "Thread was interrupted while creating DMG " + diskImageFile, e );
-//                }
-//            }
-//            catch ( CommandLineException e )
-//            {
-//                throw new MojoExecutionException( "Error creating disk image " + diskImageFile, e );
-//            }
-//            if(internetEnable) {
-//                try {
-//
-//                    Commandline internetEnable = new Commandline();
-//
-//                    internetEnable.setExecutable("hdiutil");
-//                    internetEnable.createArgument().setValue("internet-enable" );
-//                    internetEnable.createArgument().setValue("-yes");
-//                    internetEnable.createArgument().setValue(diskImageFile.getAbsolutePath());
-//
-//                    internetEnable.execute();
-//                } catch (CommandLineException e) {
-//                    throw new MojoExecutionException("Error internet enabling disk image: " + diskImageFile, e);
-//                }
-//            }
-//            projectHelper.attachArtifact(project, "dmg", null, diskImageFile);
-//        }
-
-//        zipArchiver.setDestFile( zipFile );
-//        try
-//        {
-//            String[] stubPattern = {buildDirectory.getName() + "/" + bundleDir.getName() +"/Contents/MacOS/" + javaLauncherName};
-//
-//            zipArchiver.addDirectory( buildDirectory.getParentFile(), new String[]{buildDirectory.getName() + "/**"},
-//                    stubPattern);
-//
-//            DirectoryScanner scanner = new DirectoryScanner();
-//            scanner.setBasedir( buildDirectory.getParentFile() );
-//            scanner.setIncludes( stubPattern);
-//            scanner.scan();
-//
-//            String[] stubs = scanner.getIncludedFiles();
-//            for ( int i = 0; i < stubs.length; i++ )
-//            {
-//                String s = stubs[i];
-//                zipArchiver.addFile( new File( buildDirectory.getParentFile(), s ), s, 0755 );
-//            }
-//
-//            zipArchiver.createArchive();
-//            projectHelper.attachArtifact(project, "zip", null, zipFile);
-//        }
-//        catch ( ArchiverException e )
-//        {
-//            throw new MojoExecutionException( "Could not create zip archive of application bundle in " + zipFile, e );
-//        }
-//        catch ( IOException e )
-//        {
-//            throw new MojoExecutionException( "IOException creating zip archive of application bundle in " + zipFile,
-//                                              e );
-//        }
     }
 
     /**
@@ -438,12 +326,6 @@ public class CreateApplicationBundleMojo
     private String cleanBundleName(String bundleName) {
         return bundleName.replace(':', '-');
     }
-
-//  private boolean isOSX()
-//    {
-//      String osName = System.getProperty( "os.name" );
-//      return osName.equalsIgnoreCase("Mac OS X");
-//    }
 
     /**
      * Copy all dependencies into the $JAVAROOT directory
@@ -459,9 +341,6 @@ public class CreateApplicationBundleMojo
         ArtifactRepositoryLayout layout = new DefaultRepositoryLayout();
 
         List<String> list = new ArrayList<String>();
-
-//        File repoDirectory = new File(javaDirectory, "repo");
-//        repoDirectory.mkdirs();
 
         // First, copy the project's own artifact
         File artifactFile = project.getArtifact().getFile();
