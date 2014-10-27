@@ -1,6 +1,7 @@
 package io.github.appbundler;
 
 /*
+ * Copyright 2014, Takashi AOKI and other contributors.
  * Copyright 2001-2008 The Codehaus.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -302,7 +303,7 @@ public class CreateApplicationBundleMojo
 
         System.out.println("Checking for additionalBundledClasspathResources: " + additionalBundledClasspathResources);
         if(additionalBundledClasspathResources != null && !additionalBundledClasspathResources.isEmpty()) {
-        	files.addAll(copyAdditionalBundledClasspathResources(javaDirectory, "lib", additionalBundledClasspathResources));
+            files.addAll(copyAdditionalBundledClasspathResources(javaDirectory, "lib", additionalBundledClasspathResources));
         }
 
         // Create and write the Info.plist file
@@ -438,10 +439,10 @@ public class CreateApplicationBundleMojo
         return bundleName.replace(':', '-');
     }
 
-//	private boolean isOSX()
+//  private boolean isOSX()
 //    {
-//	    String osName = System.getProperty( "os.name" );
-//	    return osName.equalsIgnoreCase("Mac OS X");
+//      String osName = System.getProperty( "os.name" );
+//      return osName.equalsIgnoreCase("Mac OS X");
 //    }
 
     /**
@@ -512,14 +513,14 @@ public class CreateApplicationBundleMojo
      * @throws MojoExecutionException
      */
     private List/*<String>*/ copyAdditionalBundledClasspathResources(File javaDirectory, String targetDirectoryName, List/*<FileSet>*/ additionalBundledClasspathResources) throws MojoExecutionException {
-    	// Create the destination directory
-    	File destinationDirectory = new File(javaDirectory, targetDirectoryName);
-    	destinationDirectory.mkdirs();
+        // Create the destination directory
+        File destinationDirectory = new File(javaDirectory, targetDirectoryName);
+        destinationDirectory.mkdirs();
 
-		List addedFilenames = copyResources(destinationDirectory, additionalBundledClasspathResources);
+        List addedFilenames = copyResources(destinationDirectory, additionalBundledClasspathResources);
 
-		return addPath(addedFilenames, targetDirectoryName);
-	}
+        return addPath(addedFilenames, targetDirectoryName);
+    }
 
     /**
      * Modifies a String list of filenames to include an additional path.
@@ -528,11 +529,11 @@ public class CreateApplicationBundleMojo
      * @return
      */
     private List addPath(List filenames, String additionalPath) {
-    	ArrayList newFilenames = new ArrayList(filenames.size());
-    	for (int i = 0; i < filenames.size(); i++) {
-    		newFilenames.add(additionalPath + '/' + filenames.get(i));
-		}
-    	return newFilenames;
+        ArrayList newFilenames = new ArrayList(filenames.size());
+        for (int i = 0; i < filenames.size(); i++) {
+            newFilenames.add(additionalPath + '/' + filenames.get(i));
+        }
+        return newFilenames;
     }
 
     /**
@@ -545,14 +546,14 @@ public class CreateApplicationBundleMojo
     private void writeInfoPlist( File infoPlist, List files )
         throws MojoExecutionException
     {
-    	Velocity.setProperty("file.resource.loader.path", "target/classes" );
-    	
-    	try {
-			Velocity.init();
-		} catch (Exception e) {
+        Velocity.setProperty("file.resource.loader.path", "target/classes" );
+
+        try {
+            Velocity.init();
+        } catch (Exception e) {
             throw new MojoExecutionException( "Exception occured in initializing velocity", e);
-		}
-    	
+        }
+
         VelocityContext velocityContext = new VelocityContext();
 
         velocityContext.put( "mainClass", mainClass );
@@ -595,30 +596,30 @@ public class CreateApplicationBundleMojo
 
         try
         {
-        	File f = new File("target/classes", dictionaryFile);
-        	URI rsrc = null;
-        	
-        	if( f.exists() && f.isFile() ) {
-        		rsrc = f.toURI();
-        		
-        		String encoding = detectEncoding(rsrc);
+            File f = new File("target/classes", dictionaryFile);
+            URI rsrc = null;
+
+            if( f.exists() && f.isFile() ) {
+                rsrc = f.toURI();
+
+                String encoding = detectEncoding(rsrc);
 
                 getLog().debug( "Detected encoding " + encoding + " for dictionary file " +dictionaryFile  );
 
                 Writer writer = new OutputStreamWriter( new FileOutputStream(infoPlist), encoding );
 
                 Template template = Velocity.getTemplate(dictionaryFile, encoding);
-                
+
                 template.merge(velocityContext, writer);
 
                 writer.close();
-        	} else {
-        		Writer writer = new OutputStreamWriter( new FileOutputStream(infoPlist), "UTF-8");
+            } else {
+                Writer writer = new OutputStreamWriter( new FileOutputStream(infoPlist), "UTF-8");
 
                 velocity.getEngine().mergeTemplate( dictionaryFile, "UTF-8", velocityContext, writer );
 
                 writer.close();
-        	}
+            }
         }
         catch ( IOException e )
         {
@@ -645,8 +646,8 @@ public class CreateApplicationBundleMojo
     }
 
     private static String detectEncoding( URI uri ) throws Exception {
-    	byte[] data = Files.readAllBytes(Paths.get(uri));
-    	return new DefaultEncodingDetector().detectXmlEncoding( new ByteArrayInputStream(data) );
+        byte[] data = Files.readAllBytes(Paths.get(uri));
+        return new DefaultEncodingDetector().detectXmlEncoding( new ByteArrayInputStream(data) );
     }
 
     /**
@@ -694,21 +695,21 @@ public class CreateApplicationBundleMojo
      * @throws MojoExecutionException In case af a resource copying error.
      */
     private List/*<String>*/ copyResources(File targetDirectory, List/*<FileSet>*/ fileSets) throws MojoExecutionException {
-    	ArrayList/*<String>*/ addedFiles = new ArrayList/*<String>*/();
+        ArrayList/*<String>*/ addedFiles = new ArrayList/*<String>*/();
         for ( Iterator it = fileSets.iterator(); it.hasNext(); )
         {
             FileSet fileSet = (FileSet) it.next();
 
             // Get the absolute base directory for the FileSet
-    		File sourceDirectory = new File(fileSet.getDirectory());
-    		if (!sourceDirectory.isAbsolute()) {
-    			sourceDirectory = new File(project.getBasedir(), sourceDirectory.getPath());
-    		}
-    		if (!sourceDirectory.exists()) {
-    			// If the requested directory does not exist, log it and carry on
-    			// TODO re-instate the logging that was here previously
-    			continue;
-    		}
+            File sourceDirectory = new File(fileSet.getDirectory());
+            if (!sourceDirectory.isAbsolute()) {
+                sourceDirectory = new File(project.getBasedir(), sourceDirectory.getPath());
+            }
+            if (!sourceDirectory.exists()) {
+                // If the requested directory does not exist, log it and carry on
+                // TODO re-instate the logging that was here previously
+                continue;
+            }
 
             List includedFiles = scanFileSet(sourceDirectory, fileSet);
             addedFiles.addAll(includedFiles);
@@ -725,11 +726,11 @@ public class CreateApplicationBundleMojo
                 // Make sure that the directory we are copying into exists
                 destinationFile.getParentFile().mkdirs();
 
-				try {
-					FileUtils.copyFile(source, destinationFile);
-				} catch (IOException e) {
-					throw new MojoExecutionException("Error copying additional resource " + source, e);
-				}
+                try {
+                    FileUtils.copyFile(source, destinationFile);
+                } catch (IOException e) {
+                    throw new MojoExecutionException("Error copying additional resource " + source, e);
+                }
             }
         }
         return addedFiles;

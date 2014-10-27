@@ -1,4 +1,6 @@
-# About
+# appbundler-plugin
+
+## About
 
 Maven plugin that creates an Application Bundle for OS X containing all your project dependencies and the necessary metadata.
 
@@ -9,7 +11,7 @@ Oracle's [Java Application Bundler](https://java.net/projects/appbundler) suppor
 
 I merged both and fix to work as a maven plugin that supports latest Mac OS X.
 
-# How to build
+## How to build
 
 To build native application launcher, run
 
@@ -23,7 +25,7 @@ and install
 mvn install
 ```
 
-# How to use
+## How to use
 
 A example configuration for pom.xml is followings,
 
@@ -60,3 +62,13 @@ Package with following command,
 ```
 mvn package appbundle:bundle
 ```
+
+## License
+
+Copyright 2014, Takashi AOKI and other contributors.
+
+Copyright 2012, Oracle and/or its affiliates.
+
+`native/main.m` is licensed under the GNU General Public License version 2.
+
+Other files is licensed under the Apache License, Version 2.0.

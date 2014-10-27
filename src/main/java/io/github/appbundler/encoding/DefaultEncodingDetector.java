@@ -1,6 +1,7 @@
 package io.github.appbundler.encoding;
 
 /*
+ * Copyright 2014, Takashi AOKI and other contributors.
  * Copyright 2001-2008 The Codehaus.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
