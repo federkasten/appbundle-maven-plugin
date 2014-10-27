@@ -65,10 +65,14 @@ mvn package appbundle:bundle
 
 ## License
 
-Copyright 2014, Takashi AOKI and other contributors.
+Copyright 2014, [Takashi AOKI][federkasten] and other contributors.
 
 Copyright 2012, Oracle and/or its affiliates.
 
-`native/main.m` is licensed under the GNU General Public License version 2.
+`native/main.m` is licensed under the [GNU General Public License version 2][gnu-general-public-license-2.0].
 
-Other files is licensed under the Apache License, Version 2.0.
+Other files is licensed under the [Apache License, Version 2.0][apache-license-2.0].
+
+[federkasten]: http://federkasten.net
+[gnu-general-public-license-2.0]: http://www.gnu.org/licenses/gpl-2.0.html
+[apache-license-2.0]: http://www.apache.org/licenses/LICENSE-2.0.html
