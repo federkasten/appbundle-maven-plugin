@@ -72,7 +72,7 @@ hdiutil create -srcfolder path/to/archive path/to/YourApplication.dmg
 
 ## License
 
-Copyright 2014, [Takashi AOKI][federkasten] and other contributors.
+Copyright 2014, [Takashi AOKI][tak.sh] and other contributors.
 
 Copyright 2012, Oracle and/or its affiliates.
 
@@ -80,6 +80,6 @@ Copyright 2012, Oracle and/or its affiliates.
 
 Other files are licensed under the [Apache License, Version 2.0][apache-license-2.0].
 
-[federkasten]: http://federkasten.net
+[tak.sh]: http://tak.sh
 [gnu-general-public-license-2.0]: http://www.gnu.org/licenses/gpl-2.0.html
 [apache-license-2.0]: http://www.apache.org/licenses/LICENSE-2.0.html
