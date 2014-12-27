@@ -26,6 +26,8 @@
     <string>1</string>
     <key>NSHumanReadableCopyright</key>
     <string></string>
+    <key>NSHighResolutionCapable</key>
+    <true/>
     <key>JVMMainClassName</key>
     <string>${mainClass}</string>
     <key>JVMClassPaths</key>
