@@ -17,7 +17,6 @@ package io.github.appbundler;
  * limitations under the License.
  */
 
-
 import io.github.appbundler.encoding.DefaultEncodingDetector;
 
 import java.io.ByteArrayInputStream;
@@ -61,8 +60,7 @@ import org.codehaus.plexus.velocity.VelocityComponent;
  * @phase package
  * @requiresDependencyResolution runtime
  */
-public class CreateApplicationBundleMojo
-    extends AbstractMojo
+public class CreateApplicationBundleMojo extends AbstractMojo
 {
 
     /**
@@ -123,7 +121,7 @@ public class CreateApplicationBundleMojo
      *
      * @parameter
      */
-    private File iconFile;
+    private String iconFile;
 
     /**
      * The version of the project. Will be used as the value of the CFBundleVersion key.
@@ -189,32 +187,31 @@ public class CreateApplicationBundleMojo
      */
     private String vmOptions;
 
+    private static String TARGET_CLASS_ROOT = "target/classes";
 
     /**
      * Bundle project as a Mac OS X application bundle.
      *
      * @throws MojoExecutionException If an unexpected error occurs during packaging of the bundle.
      */
-    public void execute()
-        throws MojoExecutionException
+    public void execute() throws MojoExecutionException
     {
-
         // Set up and create directories
         buildDirectory.mkdirs();
 
-        File bundleDir = new File( buildDirectory, bundleName + ".app" );
+        File bundleDir = new File(buildDirectory, bundleName + ".app");
         bundleDir.mkdirs();
 
-        File contentsDir = new File( bundleDir, "Contents" );
+        File contentsDir = new File(bundleDir, "Contents");
         contentsDir.mkdirs();
 
-        File resourcesDir = new File( contentsDir, "Resources" );
+        File resourcesDir = new File(contentsDir, "Resources");
         resourcesDir.mkdirs();
 
-        File javaDirectory = new File( contentsDir, "Java" );
+        File javaDirectory = new File(contentsDir, "Java");
         javaDirectory.mkdirs();
 
-        File macOSDirectory = new File( contentsDir, "MacOS" );
+        File macOSDirectory = new File(contentsDir, "MacOS");
         macOSDirectory.mkdirs();
 
         // Copy in the native java application stub
@@ -226,33 +223,32 @@ public class CreateApplicationBundleMojo
         try {
             launcherStream = new FileOutputStream(launcher);
         } catch (FileNotFoundException e) {
-            throw new MojoExecutionException(
-                "Could not copy file to directory " + launcher, e );
+            throw new MojoExecutionException("Could not copy file to directory " + launcher, e);
         }
 
         InputStream launcherResourceStream = this.getClass().getResourceAsStream(javaLauncherName);
         try {
             copyStream(launcherResourceStream, launcherStream);
-
         } catch (IOException e) {
             throw new MojoExecutionException("Could not copy file " + javaLauncherName + " to directory " + macOSDirectory, e);
         }
 
         // Copy icon file to the bundle if specified
-        if ( iconFile != null )
-        {
-            try
-            {
-                FileUtils.copyFileToDirectory( iconFile, resourcesDir );
-            }
-            catch ( IOException e )
-            {
-                throw new MojoExecutionException( "Error copying file " + iconFile + " to " + resourcesDir, e );
+        if (iconFile != null) {
+            File f = new File(TARGET_CLASS_ROOT, iconFile);
+
+            if (f.exists() && f.isFile()) {
+                try {
+                    FileUtils.copyFileToDirectory(f, resourcesDir);
+                }
+                catch ( IOException e ) {
+                    throw new MojoExecutionException("Error copying file " + iconFile + " to " + resourcesDir, e);
+                }
             }
         }
 
-        // Resolve and copy in all dependecies from the pom
-        List<String> files = copyDependencies( javaDirectory );
+        // Resolve and copy in all dependencies from the pom
+        List<String> files = copyDependencies(javaDirectory);
 
         System.out.println("Checking for additionalBundledClasspathResources: " + additionalBundledClasspathResources);
         if(additionalBundledClasspathResources != null && !additionalBundledClasspathResources.isEmpty()) {
@@ -260,12 +256,11 @@ public class CreateApplicationBundleMojo
         }
 
         // Create and write the Info.plist file
-        File infoPlist = new File( bundleDir, "Contents/Info.plist" );
-        writeInfoPlist( infoPlist, files );
+        File infoPlist = new File(bundleDir, "Contents/Info.plist");
+        writeInfoPlist(infoPlist, files);
 
         // Copy specified additional resources into the top level directory
-        if (additionalResources != null && !additionalResources.isEmpty())
-        {
+        if (additionalResources != null && !additionalResources.isEmpty()) {
             copyResources(buildDirectory, additionalResources);
         }
     }
@@ -376,7 +371,7 @@ public class CreateApplicationBundleMojo
      * @throws MojoExecutionException
      */
     private void writeInfoPlist(File infoPlist, List<String> files) throws MojoExecutionException {
-        Velocity.setProperty("file.resource.loader.path", "target/classes");
+        Velocity.setProperty("file.resource.loader.path", TARGET_CLASS_ROOT);
 
         try {
             Velocity.init();
@@ -392,7 +387,12 @@ public class CreateApplicationBundleMojo
         velocityContext.put("bundleName", cleanBundleName(bundleName));
         velocityContext.put("workingDirectory", workingDirectory);
 
-        velocityContext.put("iconFile", iconFile == null ? "GenericJavaApp.icns" : iconFile.getName());
+        if (iconFile == null) {
+            velocityContext.put("iconFile", "GenericJavaApp.icns");
+        } else {
+            File icon = new File(TARGET_CLASS_ROOT, iconFile);
+            velocityContext.put("iconFile", (icon.exists() && icon.isFile()) ? icon.getName() : "GenericJavaApp.icns");
+        }
 
         velocityContext.put("version", version);
 
@@ -407,7 +407,6 @@ public class CreateApplicationBundleMojo
             jarFilesBuffer.append("<string>");
             jarFilesBuffer.append(name);
             jarFilesBuffer.append("</string>");
-
         }
 
         if ( additionalClasspath != null ) {
@@ -416,7 +415,6 @@ public class CreateApplicationBundleMojo
                 jarFilesBuffer.append("<string>");
                 jarFilesBuffer.append(pathElement);
                 jarFilesBuffer.append("</string>");
-
             }
         }
 
@@ -425,7 +423,7 @@ public class CreateApplicationBundleMojo
         velocityContext.put("classpath", jarFilesBuffer.toString());
 
         try {
-            File f = new File("target/classes", dictionaryFile);
+            File f = new File(TARGET_CLASS_ROOT, dictionaryFile);
             URI rsrc = null;
 
             if(f.exists() && f.isFile()) {
@@ -433,7 +431,7 @@ public class CreateApplicationBundleMojo
 
                 String encoding = detectEncoding(rsrc);
 
-                getLog().debug("Detected encoding " + encoding + " for dictionary file " +dictionaryFile );
+                getLog().debug("Detected encoding " + encoding + " for dictionary file " + dictionaryFile);
 
                 Writer writer = new OutputStreamWriter(new FileOutputStream(infoPlist), encoding);
 
