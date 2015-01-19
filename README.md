@@ -5,6 +5,7 @@
 Maven plugin that creates an Application Bundle for OS X containing all your project dependencies and the necessary metadata.
 
 As you may know, Apple has dropped Java development from OS X excluding security patches.
+
 mojo's [osxappbundle-maven-plugin](http://mojo.codehaus.org/osxappbundle-maven-plugin/) depends on Apple's Java launcher, so it does not support Java version 7 and future.
 
 Oracle's [Java Application Bundler](https://java.net/projects/appbundler) supports other Java runtime (including Java 7, 8 and more), but it does not support maven.
@@ -27,7 +28,7 @@ mvn install
 
 ## How to use
 
-A example configuration for pom.xml is followings,
+A example configuration for `pom.xml` is followings,
 
 ```xml
 <build>
@@ -61,6 +62,22 @@ Package with following command,
 ```shell
 mvn package appbundle:bundle
 ```
+
+### Use Custom Info.plist and Icon
+
+Put your custom Info.plist and Icon.icns under your maven resource paths (`src/main/resources` on default configuration).
+
+Configure `pom.xml` like below,
+
+```xml
+<configuration>
+   <mainClass>your.app.MainClass</mainClass>
+   <dictionaryFile>YourCustomInfo.plist</dictionaryFile>
+   <iconFile>CustomIncon.icns</iconFile>
+</configure>
+```
+
+Specify relative paths from maven resource directories in `dictionaryFile` and `iconFile`.
 
 ## How to create DMG
 
