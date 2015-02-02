@@ -187,7 +187,7 @@ public class CreateApplicationBundleMojo extends AbstractMojo
      */
     private String vmOptions;
 
-    private static String TARGET_CLASS_ROOT = "target/classes";
+    private static String TARGET_CLASS_ROOT = "target" + File.separator + "classes";
 
     /**
      * Bundle project as a Mac OS X application bundle.
@@ -256,7 +256,7 @@ public class CreateApplicationBundleMojo extends AbstractMojo
         }
 
         // Create and write the Info.plist file
-        File infoPlist = new File(bundleDir, "Contents/Info.plist");
+        File infoPlist = new File(bundleDir, "Contents" + File.separator + "Info.plist");
         writeInfoPlist(infoPlist, files);
 
         // Copy specified additional resources into the top level directory
