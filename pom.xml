@@ -54,6 +54,14 @@
           </execution>
         </executions>
       </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.2</version>
+        <configuration>
+          <target>1.6</target>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
 
