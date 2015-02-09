@@ -36,6 +36,7 @@
 #define JVM_CLASS_PATHS_KEY "JVMClassPaths"
 #define JVM_OPTIONS_KEY "JVMOptions"
 #define JVM_ARGUMENTS_KEY "JVMArguments"
+#define LAUNCHER_WORKING_DIRECTORY_KEY "LauncherWorkingDirectory"
 
 #define UNSPECIFIED_ERROR "An unknown error occurred."
 
@@ -93,11 +94,13 @@ int launch(char *commandName) {
     // Get the main bundle
     NSBundle *mainBundle = [NSBundle mainBundle];
 
-    // Set the working directory to the user's home directory
-    chdir([NSHomeDirectory() UTF8String]);
-
     // Get the main bundle's info dictionary
     NSDictionary *infoDictionary = [mainBundle infoDictionary];
+
+    // Set the working directory
+    NSString *workingDirectory = [infoDictionary objectForKey:@LAUNCHER_WORKING_DIRECTORY_KEY];
+    workingDirectory = [workingDirectory stringByReplacingOccurrencesOfString:@APP_ROOT_PREFIX withString:[mainBundle bundlePath]];
+    chdir([workingDirectory UTF8String]);
 
     // Locate the JLI_Launch() function
     NSString *runtime = [infoDictionary objectForKey:@JVM_RUNTIME_KEY];

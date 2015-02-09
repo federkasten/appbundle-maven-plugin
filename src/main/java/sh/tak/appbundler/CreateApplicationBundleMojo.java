@@ -230,9 +230,9 @@ public class CreateApplicationBundleMojo extends AbstractMojo {
      * The path to the working directory. <br/>
      * This can be inside or outside the app bundle. <br/>
      * To define a working directory <b>inside</b> the app bundle, use e.g.
-     * <code>$JAVAROOT</code>.
+     * <code>$APP_ROOT</code>.
      *
-     * @parameter default-value="$APP_PACKAGE"
+     * @parameter default-value="$APP_ROOT"
      */
     private String workingDirectory;
 
