@@ -1,2 +1,4 @@
+.classpath
+.project
 /target
 /src/main/resources/sh/tak/appbundler/JavaAppLauncher
