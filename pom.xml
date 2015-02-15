@@ -35,6 +35,28 @@
     <developerConnection>scm:git:git@github.com:federkasten/appbundler-plugin.git</developerConnection>
   </scm>
 
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>exec-maven-plugin</artifactId>
+        <groupId>org.codehaus.mojo</groupId>
+        <version>1.3.2</version>
+        <executions>
+          <execution>
+            <id>build-applauncher</id>
+            <phase>generate-sources</phase>
+            <goals>
+              <goal>exec</goal>
+            </goals>
+            <configuration>
+              <executable>${basedir}/build.sh</executable>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
   <dependencies>
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
