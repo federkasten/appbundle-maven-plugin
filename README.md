@@ -1,4 +1,4 @@
-# appbundler-plugin
+# appbundle-maven-plugin
 
 Maven plugin that creates an Application Bundle for OS X containing all your project dependencies and the necessary metadata.
 
