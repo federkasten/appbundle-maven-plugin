@@ -1,4 +1,4 @@
-package io.github.appbundler.encoding;
+package sh.tak.appbundler.encoding;
 
 /*
  * Copyright 2014, Takashi AOKI and other contributors.

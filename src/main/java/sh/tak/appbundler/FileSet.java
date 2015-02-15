@@ -1,4 +1,4 @@
-package io.github.appbundler;
+package sh.tak.appbundler;
 
 /*
  * Copyright 2014, Takashi AOKI and other contributors.

@@ -1,4 +1,4 @@
-package io.github.appbundler;
+package sh.tak.appbundler;
 
 /*
  * Copyright 2014, Takashi AOKI and other contributors.
@@ -16,8 +16,6 @@ package io.github.appbundler;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-import io.github.appbundler.encoding.DefaultEncodingDetector;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -52,6 +50,8 @@ import org.apache.velocity.exception.ResourceNotFoundException;
 import org.codehaus.plexus.util.DirectoryScanner;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.velocity.VelocityComponent;
+
+import sh.tak.appbundler.encoding.DefaultEncodingDetector;
 
 /**
  * Package dependencies as an Application Bundle for Mac OS X.
@@ -176,7 +176,7 @@ public class CreateApplicationBundleMojo extends AbstractMojo
      * The location of the template for Info.plist.
      * Classpath is checked before the file system.
      *
-     * @parameter default-value="io/github/appbundler/Info.plist.template"
+     * @parameter default-value="sh/tak/appbundler/Info.plist.template"
      */
     private String dictionaryFile;
 

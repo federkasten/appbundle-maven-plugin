@@ -36,7 +36,7 @@ A example configuration for `pom.xml` is followings,
     <plugins>
         ...
         <plugin>
-            <groupId>io.github.appbundler</groupId>
+            <groupId>sh.tak.appbundler</groupId>
             <artifactId>appbundle-maven-plugin</artifactId>
             <version>1.0-SNAPSHOT</version>
             <configuration>
