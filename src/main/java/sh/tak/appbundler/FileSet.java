@@ -1,7 +1,5 @@
-package sh.tak.appbundler;
-
 /*
- * Copyright 2014, Takashi AOKI and other contributors.
+ * Copyright 2014, Takashi AOKI, John Vasquez, Wolfgang Fahl, and other contributors.
  * Copyright 2001-2008 The Codehaus.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,7 +14,7 @@ package sh.tak.appbundler;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
+package sh.tak.appbundler;
 
 /**
  * Object of this class represents a set of file resources
@@ -26,8 +24,8 @@ package sh.tak.appbundler;
  *
  * @author Zhenya Nyden
  */
-public class FileSet extends org.apache.maven.model.FileSet
-{
+public class FileSet extends org.apache.maven.model.FileSet {
+    
     /**
      * When false, disables the default excludes.
      * Default value is true.
@@ -44,8 +42,7 @@ public class FileSet extends org.apache.maven.model.FileSet
      *
      * @return Value for useDefaultExcludes property.
      */
-    public boolean isUseDefaultExcludes()
-    {
+    public boolean isUseDefaultExcludes() {
         return useDefaultExcludes;
     }
 
@@ -56,8 +53,7 @@ public class FileSet extends org.apache.maven.model.FileSet
      *
      * @param useDefaultExcludes Value for the useDefaultExcludes to set.
      */
-    public void setUseDefaultExcludes( boolean useDefaultExcludes )
-    {
+    public void setUseDefaultExcludes( boolean useDefaultExcludes ) {
         this.useDefaultExcludes = useDefaultExcludes;
     }
 

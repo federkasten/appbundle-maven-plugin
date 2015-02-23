@@ -1,5 +1,5 @@
 /*
- * Copyright 2014, Takashi AOKI and other contributors All rights reserved.
+ * Copyright 2014, Copyright 2014, Takashi AOKI, John Vasquez, Wolfgang Fahl, and other contributors. All rights reserved.
  * Copyright 2012, Oracle and/or its affiliates. All rights reserved.
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
@@ -57,11 +57,22 @@ typedef int (JNICALL *JLI_Launch_t)(int argc, char ** argv,
 
 int launch(char *);
 
+char **jargv = NULL;
+int jargc = 0;
+bool firstTime = true; 
+
 int main(int argc, char *argv[]) {
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 
     int result;
     @try {
+        // DRC: I have no idea why this program re-enters itself, but that's
+        // why the "firstTime" check is necessary.
+        if (argc > 1 && !jargv && firstTime) {
+            jargv = &argv[1];
+            jargc = argc - 1;
+        }
+        firstTime = false;
         launch(argv[0]);
         result = 0;
     } @catch (NSException *exception) {
@@ -161,7 +172,7 @@ int launch(char *commandName) {
     }
 
     // Initialize the arguments to JLI_Launch()
-    int argc = 1 + [options count] + 2 + [arguments count] + 1;
+    int argc = 1 + [options count] + 2 + [arguments count] + 1 + jargc;
     char *argv[argc];
 
     int i = 0;
@@ -179,6 +190,17 @@ int launch(char *commandName) {
     for (NSString *argument in arguments) {
         argument = [argument stringByReplacingOccurrencesOfString:@APP_ROOT_PREFIX withString:[mainBundle bundlePath]];
         argv[i++] = strdup([argument UTF8String]);
+    }
+
+    if (jargc > 0 && jargv) {
+        int j;
+        for (j = 0; j < jargc; j++) {
+            if (!strncmp(jargv[j], "-psn", 4)) {
+                argc--;
+                continue;
+            }
+            argv[i++] = jargv[j];
+        }
     }
 
     // Invoke JLI_Launch()
