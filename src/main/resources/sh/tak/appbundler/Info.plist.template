@@ -37,6 +37,7 @@
     <key>JVMOptions</key>
     <array>
       <string>-Dapple.laf.useScreenMenuBar=true</string>
+      <string>-Xdock:name=${bundleName}</string>
     </array>
     <key>JVMArguments</key>
     <array/>
