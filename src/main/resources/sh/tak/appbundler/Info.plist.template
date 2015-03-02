@@ -35,9 +35,7 @@
     <key>JVMVersion</key>
     <string>${jvmVersion}</string>
     <key>JVMOptions</key>
-    <array>
-      <string>-Dapple.laf.useScreenMenuBar=true</string>
-    </array>
+    ${jvmOptions}
     <key>JVMArguments</key>
     <array/>
   </dict>
