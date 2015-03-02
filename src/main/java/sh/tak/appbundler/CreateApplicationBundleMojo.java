@@ -180,7 +180,7 @@ public class CreateApplicationBundleMojo extends AbstractMojo {
      *
      * @parameter
      */
-    private File iconFile;
+    private String iconFile;
 
     /**
      * The name of the Java launcher, to execute when double-clicking
@@ -278,10 +278,12 @@ public class CreateApplicationBundleMojo extends AbstractMojo {
 
         // 3.Copy icon file to the bundle if specified
         if( iconFile != null ) {
-            if( iconFile.exists() && iconFile.isFile() ) {
+            File f = searchFile(iconFile);
+
+            if( f != null && f.exists() && f.isFile() ) {
                 getLog().info("Copying the Icon File");
                 try {
-                    FileUtils.copyFileToDirectory(iconFile, resourcesDir);
+                    FileUtils.copyFileToDirectory(f, resourcesDir);
                 } catch ( IOException ex ) {
                     throw new MojoExecutionException("Error copying file " + iconFile + " to " + resourcesDir, ex);
                 }
@@ -478,7 +480,8 @@ public class CreateApplicationBundleMojo extends AbstractMojo {
         if (iconFile == null) {
             velocityContext.put("iconFile", "GenericJavaApp.icns");
         } else {
-            velocityContext.put("iconFile", (iconFile.exists() && iconFile.isFile()) ? iconFile.getName() : "GenericJavaApp.icns");
+            File f = searchFile(iconFile);
+            velocityContext.put("iconFile", (f != null && f.exists() && f.isFile()) ? f.getName() : "GenericJavaApp.icns");
         }
 
         velocityContext.put("version", version);
@@ -623,5 +626,21 @@ public class CreateApplicationBundleMojo extends AbstractMojo {
             }
         }
         return addedFiles;
+    }
+
+    private static File searchFile(String path) {
+        File f = new File(path);
+
+        if (f.exists()) {
+            return f;
+        }
+
+        f = new File(TARGET_CLASS_ROOT, path);
+
+        if (f.exists()) {
+            return f;
+        }
+
+        return null;
     }
 }
