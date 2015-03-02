@@ -25,7 +25,7 @@ package sh.tak.appbundler;
  * @author Zhenya Nyden
  */
 public class FileSet extends org.apache.maven.model.FileSet {
-    
+
     /**
      * When false, disables the default excludes.
      * Default value is true.

@@ -23,21 +23,21 @@ import org.apache.velocity.runtime.log.LogChute;
 /**
  * Implementation of the Velocity's LogChute to be used in conjunction with a
  * Maven Mojo's logger.
- * 
+ *
  * @author John Vasquez
  */
 public class MojoLogChute implements LogChute {
 
     private final Mojo mojo;
-    
+
     /**
      * Creates the LogChute.
-     * @param mojo The Maven Mojo 
+     * @param mojo The Maven Mojo
      */
     public MojoLogChute(Mojo mojo) {
         this.mojo = mojo;
     }
-    
+
     public void init(RuntimeServices rs) throws Exception {
         // do nothing
     }
@@ -74,5 +74,5 @@ public class MojoLogChute implements LogChute {
             default: return false;
         }
     }
-    
+
 }

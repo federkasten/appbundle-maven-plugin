@@ -68,7 +68,7 @@ public class CreateApplicationBundleMojo extends AbstractMojo {
      * The root where the generated classes are.
      */
     private static final String TARGET_CLASS_ROOT = "target" + File.separator + "classes";
-    
+
     /**
      * The Maven Project Object
      *
@@ -76,7 +76,7 @@ public class CreateApplicationBundleMojo extends AbstractMojo {
      * @readonly
      */
     private MavenProject project;
-    
+
     /**
      * The Maven Project Helper Object.
      *
@@ -84,7 +84,7 @@ public class CreateApplicationBundleMojo extends AbstractMojo {
      * @readonly
      */
     private MavenProjectHelper projectHelper;
-    
+
     /**
      * The Velocity Component.
      *
@@ -94,35 +94,35 @@ public class CreateApplicationBundleMojo extends AbstractMojo {
     private VelocityComponent velocity;
 
     /**
-     * Paths to be put on the classpath in addition to the projects 
+     * Paths to be put on the classpath in addition to the projects
      * dependencies. <br/><br/>
-     * Might be useful to specify locations of dependencies in the provided 
-     * scope that are not distributed with the bundle but have a known location 
+     * Might be useful to specify locations of dependencies in the provided
+     * scope that are not distributed with the bundle but have a known location
      * on the system. <br/><br/>
-     * 
+     *
      * @see http://jira.codehaus.org/browse/MOJO-874
      * @parameter
      */
     private List<String> additionalClasspath;
-    
+
     /**
-     * Additional resources (as a list of <code>FileSet</code> objects) that 
-     * will be copied into the build directory and included in the .dmg 
+     * Additional resources (as a list of <code>FileSet</code> objects) that
+     * will be copied into the build directory and included in the .dmg
      * alongside with the application bundle.
      *
      * @parameter
      */
     private List<FileSet> additionalResources;
-    
+
     /**
-     * Additional files to bundle inside the Resources/Java directory and 
+     * Additional files to bundle inside the Resources/Java directory and
      * include on the classpath. <br/><br/>
      * These could include additional JARs or JNI libraries.
      *
      * @parameter
      */
     private List<FileSet> additionalBundledClasspathResources;
-    
+
     /**
      * The directory where the application bundle will be created.
      *
@@ -132,23 +132,23 @@ public class CreateApplicationBundleMojo extends AbstractMojo {
 
     /**
      * The name of the Bundle. <br/><br/>
-     * This is the name that is given to the application bundle; 
+     * This is the name that is given to the application bundle;
      * and it is also what will show up in the application menu, dock etc.
      *
      * @parameter default-value="${project.name}"
      * @required
      */
     private String bundleName;
-    
+
     /**
      * The location of the template for <code>Info.plist</code>. <br/><br/>
-     * 
+     *
      * Classpath is checked before the file system.
      *
      * @parameter default-value="sh/tak/appbundler/Info.plist.template"
      */
     private String dictionaryFile;
-    
+
     /**
      * The location of the generated disk image (.dmg) file. <br/><br/>
      * This property depends on the <code>generateDiskImageFile</code> property.
@@ -156,42 +156,42 @@ public class CreateApplicationBundleMojo extends AbstractMojo {
      * @parameter default-value="${project.build.directory}/${project.build.finalName}.dmg"
      */
     private File diskImageFile;
-    
+
     /**
-     * If this is set to <code>true</code>, the generated disk image (.dmg) 
+     * If this is set to <code>true</code>, the generated disk image (.dmg)
      * file will be internet-enabled. <br/><br/>
-     * The default is ${false}. This property depends on the 
+     * The default is ${false}. This property depends on the
      * <code>generateDiskImageFile</code> property.
      *
      * @parameter default-value="false"
      */
     private boolean diskImageInternetEnable;
-    
+
     /**
      * Tells whether to generate the disk image (.dmg) file or not. <br/><br/>
      * This feature can only be executed in Mac OS X environments.
-     * 
+     *
      * @parameter default-value="false"
      */
     private boolean generateDiskImageFile;
-    
+
     /**
      * The icon (.icns) file for the bundle.
      *
      * @parameter
      */
     private File iconFile;
-    
+
     /**
-     * The name of the Java launcher, to execute when double-clicking 
+     * The name of the Java launcher, to execute when double-clicking
      * the Application Bundle.
      *
      * @parameter default-value="JavaAppLauncher";
      */
     private String javaLauncherName;
-    
+
     /**
-     * Options to the JVM, will be used as the value of <code>JVMOptions</code> 
+     * Options to the JVM, will be used as the value of <code>JVMOptions</code>
      * in the <code>Info.plist</code>.
      *
      * @parameter
@@ -204,7 +204,7 @@ public class CreateApplicationBundleMojo extends AbstractMojo {
      * @parameter default-value="1.6+"
      */
     private String jvmVersion;
-    
+
     /**
      * The main class to execute when double-clicking the Application Bundle.
      *
@@ -220,11 +220,11 @@ public class CreateApplicationBundleMojo extends AbstractMojo {
      * @parameter default-value="${project.version}"
      */
     private String version;
-    
+
     /**
-     * The path to the working directory. <br/> 
-     * This can be inside or outside the app bundle. <br/> 
-     * To define a working directory <b>inside</b> the app bundle, use e.g. 
+     * The path to the working directory. <br/>
+     * This can be inside or outside the app bundle. <br/>
+     * To define a working directory <b>inside</b> the app bundle, use e.g.
      * <code>$JAVAROOT</code>.
      *
      * @parameter default-value="$APP_PACKAGE"
@@ -237,7 +237,7 @@ public class CreateApplicationBundleMojo extends AbstractMojo {
      * @throws MojoExecutionException If an unexpected error occurs during packaging of the bundle.
      */
     public void execute() throws MojoExecutionException {
-        
+
         // 1. Create and set up directories
         getLog().info("Creating and setting up the bundle directories");
         buildDirectory.mkdirs();
@@ -275,7 +275,7 @@ public class CreateApplicationBundleMojo extends AbstractMojo {
         } catch (IOException ex) {
             throw new MojoExecutionException("Could not copy file " + javaLauncherName + " to directory " + macOSDirectory, ex);
         }
-        
+
         // 3.Copy icon file to the bundle if specified
         if( iconFile != null ) {
             if( iconFile.exists() && iconFile.isFile() ) {
@@ -305,7 +305,7 @@ public class CreateApplicationBundleMojo extends AbstractMojo {
         if( additionalResources != null && !additionalResources.isEmpty()) {
             this.copyResources(buildDirectory, additionalResources);
         }
-        
+
         // 7. Make the stub executable
         if( !SystemUtils.IS_OS_WINDOWS ) {
             getLog().info( "Making stub executable" );
@@ -322,7 +322,7 @@ public class CreateApplicationBundleMojo extends AbstractMojo {
         } else {
             getLog().warn( "The stub was created without executable file permissions for UNIX systems" );
         }
-        
+
         // 8. Create the DMG file
         if( generateDiskImageFile ) {
             if( SystemUtils.IS_OS_MAC_OSX ) {
@@ -334,7 +334,7 @@ public class CreateApplicationBundleMojo extends AbstractMojo {
                     dmg.createArgument().setValue( "-srcfolder" );
                     dmg.createArgument().setValue( buildDirectory.getAbsolutePath() );
                     dmg.createArgument().setValue( diskImageFile.getAbsolutePath() );
-            
+
                     try {
                         dmg.execute().waitFor();
                     } catch ( InterruptedException ex ) {
@@ -343,7 +343,7 @@ public class CreateApplicationBundleMojo extends AbstractMojo {
                 } catch ( CommandLineException ex ) {
                     throw new MojoExecutionException( "Error creating disk image " + diskImageFile, ex );
                 }
-        
+
                 if( diskImageInternetEnable ) {
                     getLog().info("Enabling the Disk Image file for internet");
                     try {
@@ -364,7 +364,7 @@ public class CreateApplicationBundleMojo extends AbstractMojo {
                 getLog().warn("Disk Image file cannot be generated in non Mac OS X environments");
             }
         }
-            
+
         getLog().info("App Bundle generation finished");
     }
 
@@ -447,7 +447,7 @@ public class CreateApplicationBundleMojo extends AbstractMojo {
         for( String filename : filenames ) {
             newFilenames.add(additionalPath + '/' + filename);
         }
-        
+
         return newFilenames;
     }
 
@@ -494,7 +494,7 @@ public class CreateApplicationBundleMojo extends AbstractMojo {
         }
         options.append("    ").append("</array>");
         velocityContext.put("jvmOptions", options);
-        
+
         StringBuilder jarFiles = new StringBuilder();
         jarFiles.append("<array>").append("\n");
         for (String file : files) {
@@ -511,13 +511,13 @@ public class CreateApplicationBundleMojo extends AbstractMojo {
         velocityContext.put("classpath", jarFiles.toString());
         try {
             File sourceInfoPlist = new File(TARGET_CLASS_ROOT, dictionaryFile);
-            
+
             if( sourceInfoPlist.exists() && sourceInfoPlist.isFile() ) {
                 String encoding = detectEncoding(sourceInfoPlist);
                 getLog().debug("Detected encoding " + encoding + " for dictionary file " + dictionaryFile);
 
                 Writer writer = new OutputStreamWriter(new FileOutputStream(infoPlist), encoding);
-                
+
                 Template template = Velocity.getTemplate(dictionaryFile, encoding);
                 template.merge(velocityContext, writer);
 
@@ -546,7 +546,7 @@ public class CreateApplicationBundleMojo extends AbstractMojo {
         return XMLInputFactory
                 .newInstance()
                 .createXMLStreamReader( new FileReader( file ) )
-                .getCharacterEncodingScheme(); 
+                .getCharacterEncodingScheme();
     }
 
     /**
@@ -589,7 +589,7 @@ public class CreateApplicationBundleMojo extends AbstractMojo {
     private List<String> copyResources(File targetDirectory, List<FileSet> fileSets) throws MojoExecutionException {
         ArrayList<String> addedFiles = new ArrayList<String>();
         for (FileSet fileSet : fileSets) {
-            
+
             // Get the absolute base directory for the FileSet
             File sourceDirectory = new File(fileSet.getDirectory());
 
@@ -607,7 +607,7 @@ public class CreateApplicationBundleMojo extends AbstractMojo {
             addedFiles.addAll(includedFiles);
 
             getLog().info( "Copying " + includedFiles.size() + " additional resource" + (includedFiles.size() > 1 ? "s" : "") );
-            
+
             for (String destination : includedFiles) {
                 File source = new File(sourceDirectory, destination);
                 File destinationFile = new File(targetDirectory, destination);
