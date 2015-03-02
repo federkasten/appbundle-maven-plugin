@@ -70,6 +70,11 @@ public class CreateApplicationBundleMojo extends AbstractMojo {
     private static final String TARGET_CLASS_ROOT = "target" + File.separator + "classes";
 
     /**
+     * Default JVM options passed to launcher
+     */
+    private static String[] defaultJvmOptions = {"-Dapple.laf.useScreenMenuBar=true"};
+
+    /**
      * The Maven Project Object
      *
      * @parameter default-value="${project}"
@@ -489,12 +494,19 @@ public class CreateApplicationBundleMojo extends AbstractMojo {
 
         StringBuilder options = new StringBuilder();
         options.append("<array>").append("\n      ");
-        options.append("      ").append("<string>").append("-Dapple.laf.useScreenMenuBar=true").append("</string>").append("\n");
+
+        for (String jvmOption : defaultJvmOptions) {
+            options.append("      ").append("<string>").append(jvmOption).append("</string>").append("\n");
+        }
+
+        options.append("      ").append("<string>").append("-Xdock:name=" + bundleName).append("</string>").append("\n");
+
         if ( jvmOptions != null ) {
             for (String jvmOption : jvmOptions) {
                 options.append("      ").append("<string>").append(jvmOption).append("</string>").append("\n");
             }
         }
+
         options.append("    ").append("</array>");
         velocityContext.put("jvmOptions", options);
 
