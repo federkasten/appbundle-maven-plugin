@@ -38,5 +38,7 @@
     ${jvmOptions}
     <key>JVMArguments</key>
     <array/>
+    <key>LauncherWorkingDirectory</key>
+    <string>${workingDirectory}</string>
   </dict>
 </plist>
