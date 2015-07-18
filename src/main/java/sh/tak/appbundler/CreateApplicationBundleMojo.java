@@ -326,16 +326,36 @@ public class CreateApplicationBundleMojo extends AbstractMojo {
 
             File f = new File(jrePath);
             if (f.exists() && f.isDirectory()) {
-                getLog().info("Copying the JRE Folder");
-
                 File pluginsDirectory = new File(contentsDir, "PlugIns/JRE");
                 pluginsDirectory.mkdirs();
                 try {
                     FileUtils.copyDirectoryStructure(f, pluginsDirectory);
+                    File binFolder = new File(pluginsDirectory, "Contents/Home/bin");
+                    //Setting execute permissions on executables in JRE
+                    for (String filename : binFolder.list()) {
+                        new File(binFolder, filename).setExecutable(true, false);
+                    }
+                    // creating fake folder if a JRE is used
+                    File jdkDylibFolder = new File(pluginsDirectory, "Contents/Home/jre/lib/jli/libjli.dylib");
+                    if (!jdkDylibFolder.exists()) {
+                        getLog().info("Assuming that this is a JRE creating fake folder");
+                        File fakeJdkFolder = new File(pluginsDirectory, "Contents/Home/jre/lib");
+                        fakeJdkFolder.mkdirs();
+                        FileUtils.copyDirectoryStructure(new File(pluginsDirectory, "Contents/Home/lib"), fakeJdkFolder);
+
+                        fakeJdkFolder = new File(pluginsDirectory, "Contents/Home/jre/bin");
+                        fakeJdkFolder.mkdirs();
+                        FileUtils.copyDirectoryStructure(new File(pluginsDirectory, "Contents/Home/bin"), fakeJdkFolder);
+
+                        FileUtils.deleteDirectory(new File(pluginsDirectory, "Contents/Home/bin"));
+                        FileUtils.deleteDirectory(new File(pluginsDirectory, "Contents/Home/lib"));
+                    }
                     embeddJre = true;
                 } catch (IOException ex) {
                     throw new MojoExecutionException("Error copying folder " + f + " to " + pluginsDirectory, ex);
                 }
+            } else {
+                getLog().warn("JRE not found check jrePath setting in pom.xml");
             }
         }
 
