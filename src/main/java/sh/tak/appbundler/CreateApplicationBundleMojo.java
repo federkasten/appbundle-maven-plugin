@@ -235,6 +235,12 @@ public class CreateApplicationBundleMojo extends AbstractMojo {
      * @parameter default-value="$APP_ROOT"
      */
     private String workingDirectory;
+    
+    /*
+     * Rootfolder of the jre to embedd
+     * @parameter
+     */
+    private String jrePath;
 
     /**
      * Bundle project as a Mac OS X application bundle.
@@ -261,6 +267,9 @@ public class CreateApplicationBundleMojo extends AbstractMojo {
 
         File macOSDirectory = new File(contentsDir, "MacOS");
         macOSDirectory.mkdirs();
+        
+        File pluginsDirectory = new File(contentsDir, "PlugIns");
+        pluginsDirectory.mkdirs();
 
         // 2. Copy in the native java application stub
         getLog().info("Copying the native Java Application Stub");
@@ -302,12 +311,28 @@ public class CreateApplicationBundleMojo extends AbstractMojo {
             files.addAll(copyAdditionalBundledClasspathResources(javaDirectory, "lib", additionalBundledClasspathResources));
         }
 
-        // 5. Create and write the Info.plist file
+        // 5. Check if JRE should be embedded. Check JRE path. Copy JRE
+        boolean embeddJre=false;
+        if( jrePath != null ) {
+            File f = new File(jrePath);
+
+            if( f.exists() && f.isDirectory() ) {
+                getLog().info("Copying the JRE Folder");
+                try {
+                    FileUtils.copyDirectory(f, pluginsDirectory);
+                    embeddJre=true;
+                } catch ( IOException ex ) {
+                    throw new MojoExecutionException("Error copying folder " + f + " to " + pluginsDirectory, ex);
+                }
+            }
+        }
+        
+        // 6. Create and write the Info.plist file
         getLog().info("Writing the Info.plist file");
         File infoPlist = new File(bundleDir, "Contents" + File.separator + "Info.plist");
         this.writeInfoPlist(infoPlist, files);
 
-        // 6. Copy specified additional resources into the top level directory
+        // 7. Copy specified additional resources into the top level directory
         getLog().info("Copying additional resources");
         if( additionalResources != null && !additionalResources.isEmpty()) {
             this.copyResources(buildDirectory, additionalResources);
@@ -481,6 +506,7 @@ public class CreateApplicationBundleMojo extends AbstractMojo {
         velocityContext.put("cfBundleExecutable", javaLauncherName);
         velocityContext.put("bundleName", cleanBundleName(bundleName));
         velocityContext.put("workingDirectory", workingDirectory);
+        velocityContext.put("jrePath", new File(jrePath).getName());
 
         if (iconFile == null) {
             velocityContext.put("iconFile", "GenericJavaApp.icns");
