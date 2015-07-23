@@ -6,7 +6,7 @@ Maven plugin that creates an Application Bundle for OS X containing all your pro
 <plugin>
   <groupId>sh.tak.appbundler</groupId>
   <artifactId>appbundle-maven-plugin</artifactId>
-  <version>1.0.2</version>
+  <version>1.0.3</version>
   <configuration>
     <mainClass>your.app.MainClass</mainClass>
   </configuration>
