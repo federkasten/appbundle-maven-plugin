@@ -321,8 +321,8 @@ public class CreateApplicationBundleMojo extends AbstractMojo {
         }
 
         // 5. Check if JRE should be embedded. Check JRE path. Copy JRE
-        getLog().info("Copying the JRE Folder " + jrePath);
         if (jrePath != null) {
+            getLog().info("Copying the JRE Folder " + jrePath);
 
             File f = new File(jrePath);
             if (f.exists() && f.isDirectory()) {
