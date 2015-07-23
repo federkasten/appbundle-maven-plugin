@@ -38,7 +38,7 @@ Configure `pom.xml` like below,
    <mainClass>your.app.MainClass</mainClass>
    <dictionaryFile>YourCustomInfo.plist</dictionaryFile>
    <iconFile>CustomIncon.icns</iconFile>
-</configure>
+</configuration>
 ```
 
 ## Embedd Java Runtime Environment
@@ -51,8 +51,7 @@ Configure `pom.xml` like below,
 <configuration>
    <mainClass>your.app.MainClass</mainClass>
    <jrePath>/Library/Java/JavaVirtualMachines/jdk1.7.0_75.jdk</jrePath>
-   <iconFile>CustomIncon.icns</iconFile>
-</configure>
+</configuration>
 ```
 
 ## How to create DMG
