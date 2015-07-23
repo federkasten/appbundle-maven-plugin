@@ -28,6 +28,8 @@
     <string></string>
     <key>NSHighResolutionCapable</key>
     <true/>
+    <key>JVMRuntime</key>
+    <string>${jrePath}</string>
     <key>JVMMainClassName</key>
     <string>${mainClass}</string>
     <key>JVMClassPaths</key>

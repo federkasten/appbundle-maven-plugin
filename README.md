@@ -41,7 +41,19 @@ Configure `pom.xml` like below,
 </configure>
 ```
 
-Specify relative paths from maven resource directories in `dictionaryFile` and `iconFile`.
+## Embedd Java Runtime Environment
+
+Locate the JRE or JDK on your Mac (`/Library/Java/JavaVirtualMachines/` on default configuration).
+
+Configure `pom.xml` like below,
+
+```xml
+<configuration>
+   <mainClass>your.app.MainClass</mainClass>
+   <jrePath>/Library/Java/JavaVirtualMachines/jdk1.7.0_75.jdk</jrePath>
+   <iconFile>CustomIncon.icns</iconFile>
+</configure>
+```
 
 ## How to create DMG
 
