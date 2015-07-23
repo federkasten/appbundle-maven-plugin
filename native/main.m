@@ -60,7 +60,7 @@ int launch(char *);
 
 char **jargv = NULL;
 int jargc = 0;
-bool firstTime = true; 
+bool firstTime = true;
 
 int main(int argc, char *argv[]) {
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
@@ -106,7 +106,7 @@ int launch(char *commandName) {
     NSString *runtime = [infoDictionary objectForKey:@JVM_RUNTIME_KEY];
 
     const char *libjliPath = NULL;
-    if (runtime != nil) {
+    if (runtime != nil && [runtime length] > 0) {
         NSString *runtimePath = [[[NSBundle mainBundle] builtInPlugInsPath] stringByAppendingPathComponent:runtime];
         libjliPath = [[runtimePath stringByAppendingPathComponent:@"Contents/Home/jre/lib/jli/libjli.dylib"] fileSystemRepresentation];
     } else {

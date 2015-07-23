@@ -542,9 +542,13 @@ public class CreateApplicationBundleMojo extends AbstractMojo {
         velocityContext.put("cfBundleExecutable", javaLauncherName);
         velocityContext.put("bundleName", cleanBundleName(bundleName));
         velocityContext.put("workingDirectory", workingDirectory);
+
         if (embeddJre) {
             velocityContext.put("jrePath", "JRE");
+        } else {
+            velocityContext.put("jrePath", "");
         }
+
         if (iconFile == null) {
             velocityContext.put("iconFile", "GenericJavaApp.icns");
         } else {
