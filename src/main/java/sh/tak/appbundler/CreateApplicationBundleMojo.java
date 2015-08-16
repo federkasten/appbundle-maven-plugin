@@ -188,6 +188,15 @@ public class CreateApplicationBundleMojo extends AbstractMojo {
     private boolean generateDiskImageFile;
 
     /**
+     * Tells whether to include a symbolic link to the generated disk image (.dmg) file or not. <br/><br/>
+     * Relevant only if generateDiskImageFile is set.
+     *
+     * @parameter default-value="false"
+     */
+    private boolean includeApplicationsSymlink;
+
+
+    /**
      * The icon (.icns) file for the bundle.
      *
      * @parameter
@@ -393,6 +402,10 @@ public class CreateApplicationBundleMojo extends AbstractMojo {
                 getLog().info("Generating the Disk Image file");
                 Commandline dmg = new Commandline();
                 try {
+                    // user wants /Applications symlink in the resulting disk image
+                    if (includeApplicationsSymlink) {
+                        createApplicationsSymlink();
+                    }
                     dmg.setExecutable("hdiutil");
                     dmg.createArgument().setValue("create");
                     dmg.createArgument().setValue("-srcfolder");
@@ -403,6 +416,10 @@ public class CreateApplicationBundleMojo extends AbstractMojo {
                         dmg.execute().waitFor();
                     } catch (InterruptedException ex) {
                         throw new MojoExecutionException("Thread was interrupted while creating DMG " + diskImageFile, ex);
+                    } finally {
+                        if (includeApplicationsSymlink) {
+                            removeApplicationsSymlink();
+                        }
                     }
                 } catch (CommandLineException ex) {
                     throw new MojoExecutionException("Error creating disk image " + diskImageFile, ex);
@@ -723,5 +740,34 @@ public class CreateApplicationBundleMojo extends AbstractMojo {
         }
 
         return null;
+    }
+
+    private void createApplicationsSymlink() throws MojoExecutionException, CommandLineException {
+        Commandline symlink = new Commandline();
+        symlink.setExecutable("ln");
+        symlink.createArgument().setValue("-s");
+        symlink.createArgument().setValue("/Applications");
+        symlink.createArgument().setValue(buildDirectory.getAbsolutePath());
+        try {
+            symlink.execute().waitFor();
+        } catch (InterruptedException ex) {
+            throw new MojoExecutionException("Error preparing bundle disk image while creating symlink" + diskImageFile, ex);
+        }
+    }
+
+    private void removeApplicationsSymlink() throws MojoExecutionException, CommandLineException {
+        Commandline remSymlink = new Commandline();
+        String symlink = buildDirectory.getAbsolutePath() + "/Applications";
+        if (!new File(symlink).exists()) {
+            return;
+        }
+        remSymlink.setExecutable("rm");
+        remSymlink.createArgument().setValue(symlink);
+        try {
+            remSymlink.execute().waitFor();
+        } catch (InterruptedException ex) {
+            throw new MojoExecutionException("Error cleaning up (while removing " + symlink +
+                    " symlink.) Please check permissions for that symlink" + diskImageFile, ex);
+        }
     }
 }
