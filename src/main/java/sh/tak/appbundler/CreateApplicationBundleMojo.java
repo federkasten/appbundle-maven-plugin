@@ -326,6 +326,7 @@ public class CreateApplicationBundleMojo extends AbstractMojo {
 
             File f = new File(jrePath);
             if (f.exists() && f.isDirectory()) {
+                // Check if the source folder is a jdk-home
                 File pluginsDirectory = new File(contentsDir, "PlugIns/JRE");
                 pluginsDirectory.mkdirs();
                 try {
@@ -336,7 +337,7 @@ public class CreateApplicationBundleMojo extends AbstractMojo {
                         new File(binFolder, filename).setExecutable(true, false);
                     }
                     // creating fake folder if a JRE is used
-                    File jdkDylibFolder = new File(pluginsDirectory, "Contents/Home/jre/lib/jli/libjli.dylib");
+                    File jdkDylibFolder = new File(jrePath, "Contents/Home/jre/jli/libjli.dylib");
                     if (!jdkDylibFolder.exists()) {
                         getLog().info("Assuming that this is a JRE creating fake folder");
                         File fakeJdkFolder = new File(pluginsDirectory, "Contents/Home/jre/lib");
@@ -352,7 +353,6 @@ public class CreateApplicationBundleMojo extends AbstractMojo {
                     }
                     
                     new File (pluginsDirectory, "Contents/Home/jre/lib/jspawnhelper").setExecutable(true,false);
-                    getLog().info(new File (pluginsDirectory, "Contents/Home/jre/lib/jspawnhelper").getAbsolutePath());
                     embeddJre = true;
                 } catch (IOException ex) {
                     throw new MojoExecutionException("Error copying folder " + f + " to " + pluginsDirectory, ex);
