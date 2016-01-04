@@ -337,7 +337,7 @@ public class CreateApplicationBundleMojo extends AbstractMojo {
                         new File(binFolder, filename).setExecutable(true, false);
                     }
                     // creating fake folder if a JRE is used
-                    File jdkDylibFolder = new File(jrePath, "Contents/Home/jre/jli/libjli.dylib");
+                    File jdkDylibFolder = new File(jrePath, "Contents/Home/jre/lib/jli/libjli.dylib");
                     if (!jdkDylibFolder.exists()) {
                         getLog().info("Assuming that this is a JRE creating fake folder");
                         File fakeJdkFolder = new File(pluginsDirectory, "Contents/Home/jre/lib");
