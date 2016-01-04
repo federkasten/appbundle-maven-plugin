@@ -350,6 +350,9 @@ public class CreateApplicationBundleMojo extends AbstractMojo {
                         FileUtils.deleteDirectory(new File(pluginsDirectory, "Contents/Home/bin"));
                         FileUtils.deleteDirectory(new File(pluginsDirectory, "Contents/Home/lib"));
                     }
+                    
+                    new File (pluginsDirectory, "Contents/Home/jre/lib/jspawnhelper").setExecutable(true,false);
+                    getLog().info(new File (pluginsDirectory, "Contents/Home/jre/lib/jspawnhelper").getAbsolutePath());
                     embeddJre = true;
                 } catch (IOException ex) {
                     throw new MojoExecutionException("Error copying folder " + f + " to " + pluginsDirectory, ex);
