@@ -22,7 +22,7 @@ package sh.tak.appbundler;
  * <p/>
  * Created date: Jan 19, 2008
  *
- * @author Zhenya Nyden
+ * @author Zhenya Nyden, Schwarmi Bamamoto
  */
 public class FileSet extends org.apache.maven.model.FileSet {
 
@@ -33,6 +33,11 @@ public class FileSet extends org.apache.maven.model.FileSet {
      * @parameter expression="true"
      */
     private boolean useDefaultExcludes;
+    
+    /**
+     * @parameter expression="false"
+     */
+    private boolean executable;
 
     /**
      * Getter for the useDefaultExcludes property.
@@ -55,6 +60,28 @@ public class FileSet extends org.apache.maven.model.FileSet {
      */
     public void setUseDefaultExcludes( boolean useDefaultExcludes ) {
         this.useDefaultExcludes = useDefaultExcludes;
+    }
+
+    /**
+     * Getter for the executbale property.
+     * Return true if the should be executable. The flag is for file management
+     * method calls that should be aware of setting the execute flag after 
+     * copying or moving.
+     * @return the executable
+     */
+    public boolean isExecutable() {
+        return executable;
+    }
+
+    /**
+     * Setter for execute property.
+     * Setting this the execute property to true means that the execute flag 
+     * of this file should be set. This is userfull for helper applilactions that
+     * are included in the .dmg file.
+     * @param executable the executable to set
+     */
+    public void setExecutable(boolean executable) {
+        this.executable = executable;
     }
 
 }

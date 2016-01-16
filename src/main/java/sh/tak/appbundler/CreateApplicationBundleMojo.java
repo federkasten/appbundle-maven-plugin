@@ -666,7 +666,6 @@ public class CreateApplicationBundleMojo extends AbstractMojo {
     private List<String> copyResources(File targetDirectory, List<FileSet> fileSets) throws MojoExecutionException {
         ArrayList<String> addedFiles = new ArrayList<String>();
         for (FileSet fileSet : fileSets) {
-
             // Get the absolute base directory for the FileSet
             File sourceDirectory = new File(fileSet.getDirectory());
 
@@ -694,6 +693,8 @@ public class CreateApplicationBundleMojo extends AbstractMojo {
 
                 try {
                     FileUtils.copyFile(source, destinationFile);
+                    destinationFile.setExecutable(fileSet.isExecutable(),false);
+                    
                 } catch (IOException e) {
                     throw new MojoExecutionException("Error copying additional resource " + source, e);
                 }
