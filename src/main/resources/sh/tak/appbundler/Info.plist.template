@@ -28,6 +28,8 @@
     <string></string>
     <key>NSHighResolutionCapable</key>
     <true/>
+    <key>NSSupportsAutomaticGraphicsSwitching</key>
+    <true/>
     <key>JVMRuntime</key>
     <string>${jrePath}</string>
     <key>JVMMainClassName</key>
