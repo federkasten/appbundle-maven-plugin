@@ -174,7 +174,7 @@ public class CreateApplicationBundleMojo extends AbstractMojo {
      * will be internet-enabled. <br/><br/>
      * The default is ${false}. This property depends on the
      * <code>generateDiskImageFile</code> property.
-     * 
+     *
      * This feature can only be executed in Mac OS X environments.
      *
      * @parameter default-value="false"
@@ -443,34 +443,34 @@ public class CreateApplicationBundleMojo extends AbstractMojo {
                     }
                 }
                 projectHelper.attachArtifact(project, "dmg", null, diskImageFile);
-            } 
+            }
             if (SystemUtils.IS_OS_LINUX) {
-				getLog().info("Generating the Disk Image file");
-				Commandline linux_dmg = new Commandline();
-				try {
-					linux_dmg.setExecutable("genisoimage");
-					linux_dmg.createArgument().setValue("-V");
-					linux_dmg.createArgument().setValue(bundleName);
-					linux_dmg.createArgument().setValue("-D");
-					linux_dmg.createArgument().setValue("-R");
-					linux_dmg.createArgument().setValue("-apple");
-					linux_dmg.createArgument().setValue("-no-pad");
-					linux_dmg.createArgument().setValue("-o");
-					linux_dmg.createArgument().setValue(diskImageFile.getAbsolutePath());
-					linux_dmg.createArgument().setValue(buildDirectory.getAbsolutePath());
+                getLog().info("Generating the Disk Image file");
+                Commandline linux_dmg = new Commandline();
+                try {
+                    linux_dmg.setExecutable("genisoimage");
+                    linux_dmg.createArgument().setValue("-V");
+                    linux_dmg.createArgument().setValue(bundleName);
+                    linux_dmg.createArgument().setValue("-D");
+                    linux_dmg.createArgument().setValue("-R");
+                    linux_dmg.createArgument().setValue("-apple");
+                    linux_dmg.createArgument().setValue("-no-pad");
+                    linux_dmg.createArgument().setValue("-o");
+                    linux_dmg.createArgument().setValue(diskImageFile.getAbsolutePath());
+                    linux_dmg.createArgument().setValue(buildDirectory.getAbsolutePath());
 
-					try {
-						linux_dmg.execute().waitFor();
-					} catch (InterruptedException ex) {
-						throw new MojoExecutionException("Thread was interrupted while creating DMG " + diskImageFile,
-								ex);
-					}
-				} catch (CommandLineException ex) {
-					throw new MojoExecutionException("Error creating disk image " + diskImageFile + " genisoimage probably missing", ex);
-				}
-				projectHelper.attachArtifact(project, "dmg", null, diskImageFile);
+                    try {
+                        linux_dmg.execute().waitFor();
+                    } catch (InterruptedException ex) {
+                        throw new MojoExecutionException("Thread was interrupted while creating DMG " + diskImageFile,
+                                ex);
+                    }
+                } catch (CommandLineException ex) {
+                    throw new MojoExecutionException("Error creating disk image " + diskImageFile + " genisoimage probably missing", ex);
+                }
+                projectHelper.attachArtifact(project, "dmg", null, diskImageFile);
 
-			} else {
+            } else {
                 getLog().warn("Disk Image file cannot be generated in non Mac OS X and Linux environments");
             }
         }
