@@ -175,17 +175,28 @@ public class CreateApplicationBundleMojo extends AbstractMojo {
      * The default is ${false}. This property depends on the
      * <code>generateDiskImageFile</code> property.
      *
+     * This feature can only be executed in Mac OS X environments.
+     *
      * @parameter default-value="false"
      */
     private boolean diskImageInternetEnable;
 
     /**
      * Tells whether to generate the disk image (.dmg) file or not. <br/><br/>
-     * This feature can only be executed in Mac OS X environments.
+     * This feature can only be executed in Mac OS X and Linux environments.
      *
      * @parameter default-value="false"
      */
     private boolean generateDiskImageFile;
+
+    /**
+     * Tells whether to include a symbolic link to the generated disk image (.dmg) file or not. <br/><br/>
+     * Relevant only if generateDiskImageFile is set.
+     *
+     * @parameter default-value="false"
+     */
+    private boolean includeApplicationsSymlink;
+
 
     /**
      * The icon (.icns) file for the bundle.
@@ -386,6 +397,10 @@ public class CreateApplicationBundleMojo extends AbstractMojo {
                 getLog().info("Generating the Disk Image file");
                 Commandline dmg = new Commandline();
                 try {
+                    // user wants /Applications symlink in the resulting disk image
+                    if (includeApplicationsSymlink) {
+                        createApplicationsSymlink();
+                    }
                     dmg.setExecutable("hdiutil");
                     dmg.createArgument().setValue("create");
                     dmg.createArgument().setValue("-srcfolder");
@@ -396,6 +411,10 @@ public class CreateApplicationBundleMojo extends AbstractMojo {
                         dmg.execute().waitFor();
                     } catch (InterruptedException ex) {
                         throw new MojoExecutionException("Thread was interrupted while creating DMG " + diskImageFile, ex);
+                    } finally {
+                        if (includeApplicationsSymlink) {
+                            removeApplicationsSymlink();
+                        }
                     }
                 } catch (CommandLineException ex) {
                     throw new MojoExecutionException("Error creating disk image " + diskImageFile, ex);
@@ -417,8 +436,35 @@ public class CreateApplicationBundleMojo extends AbstractMojo {
                     }
                 }
                 projectHelper.attachArtifact(project, "dmg", null, diskImageFile);
+            }
+            if (SystemUtils.IS_OS_LINUX) {
+                getLog().info("Generating the Disk Image file");
+                Commandline linux_dmg = new Commandline();
+                try {
+                    linux_dmg.setExecutable("genisoimage");
+                    linux_dmg.createArgument().setValue("-V");
+                    linux_dmg.createArgument().setValue(bundleName);
+                    linux_dmg.createArgument().setValue("-D");
+                    linux_dmg.createArgument().setValue("-R");
+                    linux_dmg.createArgument().setValue("-apple");
+                    linux_dmg.createArgument().setValue("-no-pad");
+                    linux_dmg.createArgument().setValue("-o");
+                    linux_dmg.createArgument().setValue(diskImageFile.getAbsolutePath());
+                    linux_dmg.createArgument().setValue(buildDirectory.getAbsolutePath());
+
+                    try {
+                        linux_dmg.execute().waitFor();
+                    } catch (InterruptedException ex) {
+                        throw new MojoExecutionException("Thread was interrupted while creating DMG " + diskImageFile,
+                                ex);
+                    }
+                } catch (CommandLineException ex) {
+                    throw new MojoExecutionException("Error creating disk image " + diskImageFile + " genisoimage probably missing", ex);
+                }
+                projectHelper.attachArtifact(project, "dmg", null, diskImageFile);
+
             } else {
-                getLog().warn("Disk Image file cannot be generated in non Mac OS X environments");
+                getLog().warn("Disk Image file cannot be generated in non Mac OS X and Linux environments");
             }
         }
 
@@ -717,5 +763,34 @@ public class CreateApplicationBundleMojo extends AbstractMojo {
         }
 
         return null;
+    }
+
+    private void createApplicationsSymlink() throws MojoExecutionException, CommandLineException {
+        Commandline symlink = new Commandline();
+        symlink.setExecutable("ln");
+        symlink.createArgument().setValue("-s");
+        symlink.createArgument().setValue("/Applications");
+        symlink.createArgument().setValue(buildDirectory.getAbsolutePath());
+        try {
+            symlink.execute().waitFor();
+        } catch (InterruptedException ex) {
+            throw new MojoExecutionException("Error preparing bundle disk image while creating symlink" + diskImageFile, ex);
+        }
+    }
+
+    private void removeApplicationsSymlink() throws MojoExecutionException, CommandLineException {
+        Commandline remSymlink = new Commandline();
+        String symlink = buildDirectory.getAbsolutePath() + "/Applications";
+        if (!new File(symlink).exists()) {
+            return;
+        }
+        remSymlink.setExecutable("rm");
+        remSymlink.createArgument().setValue(symlink);
+        try {
+            remSymlink.execute().waitFor();
+        } catch (InterruptedException ex) {
+            throw new MojoExecutionException("Error cleaning up (while removing " + symlink +
+                    " symlink.) Please check permissions for that symlink" + diskImageFile, ex);
+        }
     }
 }
