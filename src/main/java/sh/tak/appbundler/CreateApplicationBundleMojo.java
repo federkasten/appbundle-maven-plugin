@@ -332,35 +332,28 @@ public class CreateApplicationBundleMojo extends AbstractMojo {
         }
 
         // 5. Check if JRE should be embedded. Check JRE path. Copy JRE
-        if (jrePath != null) {
-            getLog().info("Copying the JRE Folder " + jrePath);
-
+        if (jrePath != null) {            
             File f = new File(jrePath);
             if (f.exists() && f.isDirectory()) {
-                File pluginsDirectory = new File(contentsDir, "PlugIns/JRE");
+                // Check if the source folder is a jdk-home
+                File pluginsDirectory = new File(contentsDir, "PlugIns/JRE/Contents/Home/jre");
                 pluginsDirectory.mkdirs();
+                
+                File sourceFolder = new File(jrePath, "Contents/Home");                
+                if (new File(jrePath, "Contents/Home/jre").exists()) {
+                    sourceFolder = new File(jrePath, "Contents/Home/jre");
+                }
+                
                 try {
-                    FileUtils.copyDirectoryStructure(f, pluginsDirectory);
-                    File binFolder = new File(pluginsDirectory, "Contents/Home/bin");
+                    getLog().info("Copying the JRE Folder from : [" + sourceFolder + "] to PlugIn folder: [" + pluginsDirectory + "]");
+                    FileUtils.copyDirectoryStructure(sourceFolder, pluginsDirectory);
+                    File binFolder = new File(pluginsDirectory, "bin");
                     //Setting execute permissions on executables in JRE
                     for (String filename : binFolder.list()) {
                         new File(binFolder, filename).setExecutable(true, false);
                     }
-                    // creating fake folder if a JRE is used
-                    File jdkDylibFolder = new File(pluginsDirectory, "Contents/Home/jre/lib/jli/libjli.dylib");
-                    if (!jdkDylibFolder.exists()) {
-                        getLog().info("Assuming that this is a JRE creating fake folder");
-                        File fakeJdkFolder = new File(pluginsDirectory, "Contents/Home/jre/lib");
-                        fakeJdkFolder.mkdirs();
-                        FileUtils.copyDirectoryStructure(new File(pluginsDirectory, "Contents/Home/lib"), fakeJdkFolder);
-
-                        fakeJdkFolder = new File(pluginsDirectory, "Contents/Home/jre/bin");
-                        fakeJdkFolder.mkdirs();
-                        FileUtils.copyDirectoryStructure(new File(pluginsDirectory, "Contents/Home/bin"), fakeJdkFolder);
-
-                        FileUtils.deleteDirectory(new File(pluginsDirectory, "Contents/Home/bin"));
-                        FileUtils.deleteDirectory(new File(pluginsDirectory, "Contents/Home/lib"));
-                    }
+                                       
+                    new File (pluginsDirectory, "lib/jspawnhelper").setExecutable(true,false);
                     embeddJre = true;
                 } catch (IOException ex) {
                     throw new MojoExecutionException("Error copying folder " + f + " to " + pluginsDirectory, ex);
@@ -719,7 +712,6 @@ public class CreateApplicationBundleMojo extends AbstractMojo {
     private List<String> copyResources(File targetDirectory, List<FileSet> fileSets) throws MojoExecutionException {
         ArrayList<String> addedFiles = new ArrayList<String>();
         for (FileSet fileSet : fileSets) {
-
             // Get the absolute base directory for the FileSet
             File sourceDirectory = new File(fileSet.getDirectory());
 
@@ -747,6 +739,8 @@ public class CreateApplicationBundleMojo extends AbstractMojo {
 
                 try {
                     FileUtils.copyFile(source, destinationFile);
+                    destinationFile.setExecutable(fileSet.isExecutable(),false);
+                    
                 } catch (IOException e) {
                     throw new MojoExecutionException("Error copying additional resource " + source, e);
                 }
