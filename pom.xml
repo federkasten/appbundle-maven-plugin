@@ -4,7 +4,7 @@
   <groupId>sh.tak.appbundler</groupId>
   <artifactId>appbundle-maven-plugin</artifactId>
   <packaging>maven-plugin</packaging>
-  <version>1.1.0</version>
+  <version>1.1.1-SNAPSHOT</version>
 
   <name>appbundle-maven-plugin</name>
   <url>https://github.com/federkasten/appbundle-maven-plugin</url>
