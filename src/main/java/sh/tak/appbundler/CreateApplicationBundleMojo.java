@@ -332,18 +332,18 @@ public class CreateApplicationBundleMojo extends AbstractMojo {
         }
 
         // 5. Check if JRE should be embedded. Check JRE path. Copy JRE
-        if (jrePath != null) {            
+        if (jrePath != null) {
             File f = new File(jrePath);
             if (f.exists() && f.isDirectory()) {
                 // Check if the source folder is a jdk-home
                 File pluginsDirectory = new File(contentsDir, "PlugIns/JRE/Contents/Home/jre");
                 pluginsDirectory.mkdirs();
-                
-                File sourceFolder = new File(jrePath, "Contents/Home");                
+
+                File sourceFolder = new File(jrePath, "Contents/Home");
                 if (new File(jrePath, "Contents/Home/jre").exists()) {
                     sourceFolder = new File(jrePath, "Contents/Home/jre");
                 }
-                
+
                 try {
                     getLog().info("Copying the JRE Folder from : [" + sourceFolder + "] to PlugIn folder: [" + pluginsDirectory + "]");
                     FileUtils.copyDirectoryStructure(sourceFolder, pluginsDirectory);
@@ -352,7 +352,7 @@ public class CreateApplicationBundleMojo extends AbstractMojo {
                     for (String filename : binFolder.list()) {
                         new File(binFolder, filename).setExecutable(true, false);
                     }
-                                       
+
                     new File (pluginsDirectory, "lib/jspawnhelper").setExecutable(true,false);
                     embeddJre = true;
                 } catch (IOException ex) {
@@ -740,7 +740,7 @@ public class CreateApplicationBundleMojo extends AbstractMojo {
                 try {
                     FileUtils.copyFile(source, destinationFile);
                     destinationFile.setExecutable(fileSet.isExecutable(),false);
-                    
+
                 } catch (IOException e) {
                     throw new MojoExecutionException("Error copying additional resource " + source, e);
                 }

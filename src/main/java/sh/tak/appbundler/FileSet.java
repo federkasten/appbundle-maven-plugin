@@ -33,7 +33,7 @@ public class FileSet extends org.apache.maven.model.FileSet {
      * @parameter expression="true"
      */
     private boolean useDefaultExcludes;
-    
+
     /**
      * @parameter expression="false"
      */
@@ -65,7 +65,7 @@ public class FileSet extends org.apache.maven.model.FileSet {
     /**
      * Getter for the executbale property.
      * Return true if the should be executable. The flag is for file management
-     * method calls that should be aware of setting the execute flag after 
+     * method calls that should be aware of setting the execute flag after
      * copying or moving.
      * @return the executable
      */
@@ -75,7 +75,7 @@ public class FileSet extends org.apache.maven.model.FileSet {
 
     /**
      * Setter for execute property.
-     * Setting this the execute property to true means that the execute flag 
+     * Setting this the execute property to true means that the execute flag
      * of this file should be set. This is userfull for helper applilactions that
      * are included in the .dmg file.
      * @param executable the executable to set
@@ -83,5 +83,4 @@ public class FileSet extends org.apache.maven.model.FileSet {
     public void setExecutable(boolean executable) {
         this.executable = executable;
     }
-
 }
