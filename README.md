@@ -6,7 +6,7 @@ Maven plugin that creates an Application Bundle for OS X containing all your pro
 <plugin>
   <groupId>sh.tak.appbundler</groupId>
   <artifactId>appbundle-maven-plugin</artifactId>
-  <version>1.0.4</version>
+  <version>1.1.0</version>
   <configuration>
     <mainClass>your.app.MainClass</mainClass>
   </configuration>
@@ -50,16 +50,19 @@ Configure `pom.xml` like below,
 ```xml
 <configuration>
    <mainClass>your.app.MainClass</mainClass>
-   <jrePath>/Library/Java/JavaVirtualMachines/jdk1.7.0_75.jdk</jrePath>
+   <jrePath>/Library/Java/JavaVirtualMachines/jdk1.8.0_74.jdk</jrePath>
 </configuration>
 ```
 
 ## How to create DMG
 
-You can create DMG(Apple disk image) file with the following command,
+Configure `pom.xml` like below,
 
-```shell
-hdiutil create -srcfolder path/to/archive path/to/YourApplication.dmg
+```xml
+<configuration>
+   <mainClass>your.app.MainClass</mainClass>
+   <generateDiskImageFile>true</generateDiskImageFile>
+</configuration>
 ```
 
 ## About this plugin
@@ -74,7 +77,7 @@ I merged both and fix to work as a maven plugin that supports latest Mac OS X.
 
 ## License
 
-Copyright 2014 - 2015, [Takashi AOKI][tak.sh] and other contributors.
+Copyright 2014 - 2016, [Takashi AOKI][tak.sh] and other contributors.
 
 Copyright 2012, Oracle and/or its affiliates.
 
