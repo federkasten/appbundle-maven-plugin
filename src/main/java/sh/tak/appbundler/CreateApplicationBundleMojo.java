@@ -312,7 +312,7 @@ public class CreateApplicationBundleMojo extends AbstractMojo {
 
         // 3.Copy icon file to the bundle if specified
         if (iconFile != null) {
-            File f = searchFile(iconFile);
+            File f = searchFile(iconFile, project.getBasedir());
 
             if (f != null && f.exists() && f.isFile()) {
                 getLog().info("Copying the Icon File");
@@ -321,6 +321,8 @@ public class CreateApplicationBundleMojo extends AbstractMojo {
                 } catch (IOException ex) {
                     throw new MojoExecutionException("Error copying file " + iconFile + " to " + resourcesDir, ex);
                 }
+            } else {
+                throw new MojoExecutionException(String.format("Could not locate iconFile '%s'", iconFile));
             }
         }
 
@@ -591,7 +593,7 @@ public class CreateApplicationBundleMojo extends AbstractMojo {
         if (iconFile == null) {
             velocityContext.put("iconFile", "GenericJavaApp.icns");
         } else {
-            File f = searchFile(iconFile);
+            File f = searchFile(iconFile, project.getBasedir());
             velocityContext.put("iconFile", (f != null && f.exists() && f.isFile()) ? f.getName() : "GenericJavaApp.icns");
         }
 
@@ -749,8 +751,8 @@ public class CreateApplicationBundleMojo extends AbstractMojo {
         return addedFiles;
     }
 
-    private static File searchFile(String path) {
-        File f = new File(path);
+    private static File searchFile(String path, File basedir) {
+        File f = new File(basedir, path);
 
         if (f.exists()) {
             return f;
