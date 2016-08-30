@@ -6,7 +6,7 @@ Maven plugin that creates an Application Bundle for OS X containing all your pro
 <plugin>
   <groupId>sh.tak.appbundler</groupId>
   <artifactId>appbundle-maven-plugin</artifactId>
-  <version>1.1.0</version>
+  <version>1.1.1</version>
   <configuration>
     <mainClass>your.app.MainClass</mainClass>
   </configuration>
@@ -50,7 +50,7 @@ Configure `pom.xml` like below,
 ```xml
 <configuration>
    <mainClass>your.app.MainClass</mainClass>
-   <jrePath>/Library/Java/JavaVirtualMachines/jdk1.8.0_74.jdk</jrePath>
+   <jrePath>/Library/Java/JavaVirtualMachines/jdk1.8.0_92.jdk</jrePath>
 </configuration>
 ```
 
@@ -85,6 +85,6 @@ Copyright 2012, Oracle and/or its affiliates.
 
 Other files are licensed under the [Apache License, Version 2.0][apache-license-2.0].
 
-[tak.sh]: http://tak.sh
+[tak.sh]: https://tak.sh
 [gnu-general-public-license-2.0]: http://www.gnu.org/licenses/gpl-2.0.html
 [apache-license-2.0]: http://www.apache.org/licenses/LICENSE-2.0.html
