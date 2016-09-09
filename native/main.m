@@ -32,6 +32,7 @@
 #define JAVA_LAUNCH_ERROR "JavaLaunchError"
 
 #define JVM_RUNTIME_KEY "JVMRuntime"
+#define JVM_RUNTIME_PATH_KEY "JVMRuntimePath"
 #define JVM_MAIN_CLASS_NAME_KEY "JVMMainClassName"
 #define JVM_CLASS_PATHS_KEY "JVMClassPaths"
 #define JVM_OPTIONS_KEY "JVMOptions"
@@ -104,11 +105,16 @@ int launch(char *commandName) {
 
     // Locate the JLI_Launch() function
     NSString *runtime = [infoDictionary objectForKey:@JVM_RUNTIME_KEY];
+    NSString *runtimeFullPath = [infoDictionary objectForKey:@JVM_RUNTIME_PATH_KEY];
 
     const char *libjliPath = NULL;
     if (runtime != nil && [runtime length] > 0) {
         NSString *runtimePath = [[[NSBundle mainBundle] builtInPlugInsPath] stringByAppendingPathComponent:runtime];
         libjliPath = [[runtimePath stringByAppendingPathComponent:@"Contents/Home/jre/lib/jli/libjli.dylib"] fileSystemRepresentation];
+    }else if (runtimeFullPath != nil && [runtimeFullPath length] > 0 ) {
+        //If path has $USER, replace it with currently logged in user's username for home directory 
+        runtimeFullPath = [runtimeFullPath stringByReplacingOccurrencesOfString:@"$USER" withString:NSUserName()];    
+        libjliPath = [[runtimeFullPath stringByAppendingPathComponent:@"Contents/Home/jre/lib/jli/libjli.dylib"] fileSystemRepresentation];
     } else {
         libjliPath = LIBJLI_DYLIB;
     }

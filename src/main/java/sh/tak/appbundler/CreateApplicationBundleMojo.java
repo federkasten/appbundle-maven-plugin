@@ -265,6 +265,13 @@ public class CreateApplicationBundleMojo extends AbstractMojo {
     private String jrePath;
 
     /**
+     * The full path to the installation directory of the jre on the user's machine.
+     *
+     * @parameter default-value=""
+     */
+    private String jreFullPath;
+
+    /**
      * Bundle project as a Mac OS X application bundle.
      *
      * @throws MojoExecutionException If an unexpected error occurs during
@@ -363,6 +370,9 @@ public class CreateApplicationBundleMojo extends AbstractMojo {
             } else {
                 getLog().warn("JRE not found check jrePath setting in pom.xml");
             }
+        }else if (jreFullPath != null){
+            getLog().info("JRE Full path is used [" + jreFullPath + "]");
+            embeddJre = true;
         }
 
         // 6. Create and write the Info.plist file
@@ -584,10 +594,15 @@ public class CreateApplicationBundleMojo extends AbstractMojo {
         velocityContext.put("bundleName", cleanBundleName(bundleName));
         velocityContext.put("workingDirectory", workingDirectory);
 
-        if (embeddJre) {
+        if (embeddJre && jrePath != null) {
             velocityContext.put("jrePath", "JRE");
+            velocityContext.put("jreFullPath", "");
+        } else if (embeddJre && jreFullPath != null) {
+            velocityContext.put("jrePath", "");
+            velocityContext.put("jreFullPath", jreFullPath);
         } else {
             velocityContext.put("jrePath", "");
+            velocityContext.put("jreFullPath", "");
         }
 
         if (iconFile == null) {
