@@ -32,6 +32,8 @@
     <true/>
     <key>JVMRuntime</key>
     <string>${jrePath}</string>
+    <key>JVMRuntimePath</key>
+    <string>${jreFullPath}</string>
     <key>JVMMainClassName</key>
     <string>${mainClass}</string>
     <key>JVMClassPaths</key>
