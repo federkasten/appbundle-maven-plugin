@@ -111,9 +111,9 @@ int launch(char *commandName) {
     if (runtime != nil && [runtime length] > 0) {
         NSString *runtimePath = [[[NSBundle mainBundle] builtInPlugInsPath] stringByAppendingPathComponent:runtime];
         libjliPath = [[runtimePath stringByAppendingPathComponent:@"Contents/Home/jre/lib/jli/libjli.dylib"] fileSystemRepresentation];
-    }else if (runtimeFullPath != nil && [runtimeFullPath length] > 0 ) {
-        //If path has $USER, replace it with currently logged in user's username for home directory 
-        runtimeFullPath = [runtimeFullPath stringByReplacingOccurrencesOfString:@"$USER" withString:NSUserName()];    
+    } else if (runtimeFullPath != nil && [runtimeFullPath length] > 0 ) {
+        //If path has $USER, replace it with currently logged in user's username for home directory
+        runtimeFullPath = [runtimeFullPath stringByReplacingOccurrencesOfString:@"$USER" withString:NSUserName()];
         libjliPath = [[runtimeFullPath stringByAppendingPathComponent:@"Contents/Home/jre/lib/jli/libjli.dylib"] fileSystemRepresentation];
     } else {
         libjliPath = LIBJLI_DYLIB;

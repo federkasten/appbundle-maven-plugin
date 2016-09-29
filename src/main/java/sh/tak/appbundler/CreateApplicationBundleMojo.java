@@ -370,7 +370,7 @@ public class CreateApplicationBundleMojo extends AbstractMojo {
             } else {
                 getLog().warn("JRE not found check jrePath setting in pom.xml");
             }
-        }else if (jreFullPath != null){
+        } else if (jreFullPath != null){
             getLog().info("JRE Full path is used [" + jreFullPath + "]");
             embeddJre = true;
         }
