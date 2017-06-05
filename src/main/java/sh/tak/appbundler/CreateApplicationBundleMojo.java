@@ -319,7 +319,7 @@ public class CreateApplicationBundleMojo extends AbstractMojo {
 
         // 3.Copy icon file to the bundle if specified
         if (iconFile != null) {
-            File f = searchFile(iconFile, project.getBasedir());
+            File f = searchFile(iconFile);
 
             if (f != null && f.exists() && f.isFile()) {
                 getLog().info("Copying the Icon File");
@@ -342,7 +342,7 @@ public class CreateApplicationBundleMojo extends AbstractMojo {
 
         // 5. Check if JRE should be embedded. Check JRE path. Copy JRE
         if (jrePath != null) {
-            File f = new File(jrePath);
+            File f = searchFile(jrePath);
             if (f.exists() && f.isDirectory()) {
                 // Check if the source folder is a jdk-home
                 File pluginsDirectory = new File(contentsDir, "PlugIns/JRE/Contents/Home/jre");
@@ -608,7 +608,7 @@ public class CreateApplicationBundleMojo extends AbstractMojo {
         if (iconFile == null) {
             velocityContext.put("iconFile", "GenericJavaApp.icns");
         } else {
-            File f = searchFile(iconFile, project.getBasedir());
+            File f = searchFile(iconFile);
             velocityContext.put("iconFile", (f != null && f.exists() && f.isFile()) ? f.getName() : "GenericJavaApp.icns");
         }
 
@@ -648,7 +648,7 @@ public class CreateApplicationBundleMojo extends AbstractMojo {
 
         velocityContext.put("classpath", jarFiles.toString());
         try {
-            File sourceInfoPlist = new File(TARGET_CLASS_ROOT, dictionaryFile);
+            File sourceInfoPlist = searchFile(dictionaryFile);
 
             if (sourceInfoPlist.exists() && sourceInfoPlist.isFile()) {
                 String encoding = detectEncoding(sourceInfoPlist);
@@ -766,15 +766,18 @@ public class CreateApplicationBundleMojo extends AbstractMojo {
         return addedFiles;
     }
 
-    private static File searchFile(String path, File basedir) {
-        File f = new File(basedir, path);
+    private File searchFile(String path) {
+        File f = new File(path);
+        if (f.exists()) {
+            return f;
+        }
 
+        f = new File(project.getBasedir(), path);
         if (f.exists()) {
             return f;
         }
 
         f = new File(TARGET_CLASS_ROOT, path);
-
         if (f.exists()) {
             return f;
         }
