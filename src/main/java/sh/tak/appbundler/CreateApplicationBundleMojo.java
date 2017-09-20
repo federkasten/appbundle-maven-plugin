@@ -65,11 +65,6 @@ public class CreateApplicationBundleMojo extends AbstractMojo {
     private static final String[] DEFAULT_INCLUDES = {"**/**"};
 
     /**
-     * The root where the generated classes are.
-     */
-    private static final String TARGET_CLASS_ROOT = "target" + File.separator + "classes";
-
-    /**
      * Default JVM options passed to launcher
      */
     private static String[] defaultJvmOptions = {"-Dapple.laf.useScreenMenuBar=true"};
@@ -591,7 +586,7 @@ public class CreateApplicationBundleMojo extends AbstractMojo {
      */
     private void writeInfoPlist(File infoPlist, List<String> files) throws MojoExecutionException {
         Velocity.setProperty(Velocity.RUNTIME_LOG_LOGSYSTEM, new MojoLogChute(this));
-        Velocity.setProperty("file.resource.loader.path", TARGET_CLASS_ROOT);
+        Velocity.setProperty("file.resource.loader.path", project.getModel().getBuild().getOutputDirectory());
 
         try {
             Velocity.init();
@@ -660,7 +655,7 @@ public class CreateApplicationBundleMojo extends AbstractMojo {
 
         velocityContext.put("classpath", jarFiles.toString());
         try {
-            File sourceInfoPlist = new File(TARGET_CLASS_ROOT, dictionaryFile);
+            File sourceInfoPlist = new File(project.getModel().getBuild().getOutputDirectory(), dictionaryFile);
 
             if (sourceInfoPlist.exists() && sourceInfoPlist.isFile()) {
                 String encoding = detectEncoding(sourceInfoPlist);
@@ -778,14 +773,14 @@ public class CreateApplicationBundleMojo extends AbstractMojo {
         return addedFiles;
     }
 
-    private static File searchFile(String path, File basedir) {
+    private File searchFile(String path, File basedir) {
         File f = new File(basedir, path);
 
         if (f.exists()) {
             return f;
         }
 
-        f = new File(TARGET_CLASS_ROOT, path);
+        f = new File(project.getModel().getBuild().getOutputDirectory(), path);
 
         if (f.exists()) {
             return f;
