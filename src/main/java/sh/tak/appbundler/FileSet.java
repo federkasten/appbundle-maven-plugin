@@ -40,6 +40,13 @@ public class FileSet extends org.apache.maven.model.FileSet {
     private boolean executable;
 
     /**
+     * The path where the files will be saved to.
+     *
+     * @parameter default-value=""
+     */
+    private String targetPath;
+
+    /**
      * Getter for the useDefaultExcludes property.
      * Returns true if default excludes are going to be added to
      * the FileSet's list of excludes; false if only user excludes
@@ -82,5 +89,23 @@ public class FileSet extends org.apache.maven.model.FileSet {
      */
     public void setExecutable(boolean executable) {
         this.executable = executable;
+    }
+
+    /**
+     * Getter for the targetPath property.
+     *
+     * @return the path
+     */
+    public String getTargetPath() {
+        return targetPath;
+    }
+
+    /**
+     * Setter for targetPath property
+     *
+     * @param path path to be set
+     */
+    public void setTargetPath(String path) {
+        this.targetPath = path;
     }
 }
