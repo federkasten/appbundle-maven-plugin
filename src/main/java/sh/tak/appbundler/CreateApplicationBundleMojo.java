@@ -407,6 +407,10 @@ public class CreateApplicationBundleMojo extends AbstractMojo {
         if (generateDiskImageFile) {
             if (SystemUtils.IS_OS_MAC) {
                 getLog().info("Generating the Disk Image file");
+
+                // Make sure that the directory we are creating diskImageFile into exists
+                diskImageFile.getParentFile().mkdirs();
+
                 Commandline dmg = new Commandline();
                 try {
                     // user wants /Applications symlink in the resulting disk image
@@ -451,6 +455,10 @@ public class CreateApplicationBundleMojo extends AbstractMojo {
             }
             if (SystemUtils.IS_OS_LINUX) {
                 getLog().info("Generating the Disk Image file");
+
+                // Make sure that the directory we are creating diskImageFile into exists
+                diskImageFile.getParentFile().mkdirs();
+
                 Commandline linux_dmg = new Commandline();
                 try {
                     linux_dmg.setExecutable("genisoimage");
