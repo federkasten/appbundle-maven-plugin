@@ -412,7 +412,7 @@ public class CreateApplicationBundleMojo extends AbstractMojo {
 
         // 8. Create the DMG file
         if (generateDiskImageFile) {
-            if (SystemUtils.IS_OS_MAC) {
+            if (SystemUtils.IS_OS_MAC_OSX || SystemUtils.IS_OS_MAC) {
                 getLog().info("Generating the Disk Image file");
                 Commandline dmg = new Commandline();
                 try {
