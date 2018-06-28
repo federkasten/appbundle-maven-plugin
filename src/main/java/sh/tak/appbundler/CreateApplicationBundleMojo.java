@@ -229,9 +229,31 @@ public class CreateApplicationBundleMojo extends AbstractMojo {
     private String jvmVersion;
 
     /**
+     * The value for the <code>JVMDebug</code> key.
+     *
+     * @parameter default-value="false"
+     */
+    private boolean jvmDebug;
+
+
+    /**
+     * The value for the <code>JREPreferred</code> key.
+     *
+     * @parameter default-value="false"
+     */
+    private boolean jrePreferred;
+
+    /**
+     * The value for the <code>JDKPreferred</code> key.
+     *
+     * @parameter default-value="false"
+     */
+    private boolean jdkPreferred;
+
+    /**
      * The main class to execute when double-clicking the Application Bundle.
      *
-     * @parameter expression="${mainClass}"
+     * @parameter property="${mainClass}"
      * @required
      */
     private String mainClass;
@@ -274,7 +296,7 @@ public class CreateApplicationBundleMojo extends AbstractMojo {
     /**
      * If true, no dependencies will be added. Par example for FAT-Jars.
      *
-     * @parameter expression="false"
+     * @parameter property="false"
      */
     private boolean excludeDependencies;
 
@@ -626,6 +648,9 @@ public class CreateApplicationBundleMojo extends AbstractMojo {
 
         velocityContext.put("version", version);
         velocityContext.put("jvmVersion", jvmVersion);
+        velocityContext.put("jvmDebug", jvmDebug);
+        velocityContext.put("jrePreferred", jrePreferred);
+        velocityContext.put("jdkPreferred", jdkPreferred);
 
         StringBuilder options = new StringBuilder();
         options.append("<array>").append("\n      ");
