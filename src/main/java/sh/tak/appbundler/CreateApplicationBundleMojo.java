@@ -279,13 +279,24 @@ public class CreateApplicationBundleMojo extends AbstractMojo {
     private boolean excludeDependencies;
 
     /**
+     * Set this to 'true' to bypass the execution of this plugin.
+     *
+     * @parameter default-value=false
+     */
+    private boolean skip;
+
+    /**
      * Bundle project as a Mac OS X application bundle.
      *
      * @throws MojoExecutionException If an unexpected error occurs during
      * packaging of the bundle.
      */
     public void execute() throws MojoExecutionException {
-
+        if (skip) {
+            getLog().info("Skipping plugin execution");
+            return;
+        }
+        
         // 1. Create and set up directories
         getLog().info("Creating and setting up the bundle directories");
         buildDirectory.mkdirs();
