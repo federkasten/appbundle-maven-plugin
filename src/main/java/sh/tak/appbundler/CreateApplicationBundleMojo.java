@@ -761,7 +761,12 @@ public class CreateApplicationBundleMojo extends AbstractMojo {
 
             for (String destination : includedFiles) {
                 File source = new File(sourceDirectory, destination);
-                File destinationFile = new File(targetDirectory, destination);
+                File destinationFile;
+                if (fileSet.getTargetPath() == null || fileSet.getTargetPath().isEmpty()) {
+                    destinationFile = new File(targetDirectory, destination);
+                } else {
+                    destinationFile = new File(fileSet.getTargetPath(), destination);
+                }
 
                 // Make sure that the directory we are copying into exists
                 destinationFile.getParentFile().mkdirs();
