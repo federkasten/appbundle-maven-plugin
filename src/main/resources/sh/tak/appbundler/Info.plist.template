@@ -34,6 +34,12 @@
     <string>${jrePath}</string>
     <key>JVMRuntimePath</key>
     <string>${jreFullPath}</string>
+    <key>JVMDebug</key>
+    <string>${jvmDebug}</string>
+    <key>JDKPreferred</key>
+    <string>${jdkPreferred}</string>
+    <key>JREPreferred</key>
+    <string>${jrePreferred}</string>
     <key>JVMMainClassName</key>
     <string>${mainClass}</string>
     <key>JVMClassPaths</key>
