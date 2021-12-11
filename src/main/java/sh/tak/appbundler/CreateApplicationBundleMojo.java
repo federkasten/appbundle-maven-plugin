@@ -190,6 +190,15 @@ public class CreateApplicationBundleMojo extends AbstractMojo {
     private boolean generateDiskImageFile;
 
     /**
+     * The file system for the disk image. <br/><br/>
+     * The default is HFS+. This property depends on the
+     * <code>generateDiskImageFile</code> property.
+     *
+     * @parameter default-value="HFS+"
+     */
+    private String fileSystem;
+
+    /**
      * Tells whether to include a symbolic link to the generated disk image (.dmg) file or not. <br/><br/>
      * Relevant only if generateDiskImageFile is set.
      *
@@ -422,6 +431,8 @@ public class CreateApplicationBundleMojo extends AbstractMojo {
                     }
                     dmg.setExecutable("hdiutil");
                     dmg.createArgument().setValue("create");
+                    dmg.createArgument().setValue("-fs");
+                    dmg.createArgument().setValue(fileSystem);
                     dmg.createArgument().setValue("-srcfolder");
                     dmg.createArgument().setValue(buildDirectory.getAbsolutePath());
                     dmg.createArgument().setValue(diskImageFile.getAbsolutePath());
